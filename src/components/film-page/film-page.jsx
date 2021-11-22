@@ -1,12 +1,12 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import { WrapperColumnCenter } from '../../atoms/atoms.styled';
 import {
-  FilmTitle, FilmPoster, FilmDescription, FilmInfo 
+  FilmTitle, FilmPoster, FilmDescription, FilmInfo,
 } from './film-page.styled';
 
 const FilmPage = (props) => {
   // eslint-disable-next-line react/prop-types
-  const { id } = props.match.params;
+  const { match: { params: { id } } } = props;
   const [filmDetails, setFilmDetails] = useState({});
 
   useEffect(() => {
