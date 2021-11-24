@@ -6,7 +6,7 @@ const ProtectedRoute = (props) => {
 
   return localStorage.getItem('isAuthenticated') ? (
     // eslint-disable-next-line react/jsx-props-no-spreading
-    <Route {...props} />
+    <Route {...props} exact />
   ) : (
     <Redirect
       to={{

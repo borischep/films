@@ -6,7 +6,7 @@ import {
 } from 'react-router-dom';
 import Login from './components/login';
 import ProtectedRoute from './components/protected-route';
-import DynamicRoute from './components/dynamic-route/dynamic-route';
+import FilmPage from './components/film-page';
 
 import './global.css';
 
@@ -15,13 +15,11 @@ const Films = React.lazy(() => import('./components/films'));
 const App = () => (
   <Router>
     <Switch>
-      <Route path="/" exact>
-        <Login />
-      </Route>
+      <Route path="/" exact component={Login} />
+      <Route path="/films/:id" component={FilmPage} />
       <Suspense fallback={<div>Loading...</div>}>
-        <ProtectedRoute path="/films" exact component={Films} />
+        <ProtectedRoute path="/films" component={Films} />
       </Suspense>
-      <DynamicRoute />
     </Switch>
   </Router>
 );
