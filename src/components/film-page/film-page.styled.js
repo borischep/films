@@ -16,7 +16,7 @@ export const FilmDescription = styled.div`
     font-size: 18px;
     text-align: left;
     width: 500px;
-`
+`;
 
 export const FilmInfo = styled.div`
     display: flex;
@@ -24,4 +24,4 @@ export const FilmInfo = styled.div`
     justify-content: space-around;
     align-items: center;
     width: 70%;
-`
+`;
