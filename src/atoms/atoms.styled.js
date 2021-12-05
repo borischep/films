@@ -5,6 +5,7 @@ export const WrapperColumnCenter = styled.div`
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    padding-top: 10px;
 `;
 
 export const WrapperRowWrap = styled.div`
@@ -17,16 +18,21 @@ export const WrapperRowWrap = styled.div`
 
 export const Text = styled.div`
     font-size: 24px;
-    margin-bottom: 10px;
 `;
 
 export const Input = styled.input`
-    width: 100px;
-    height: 20px;
+    width: 150px;
     border-radius: 10px;
+    border: none;
+    margin: 10px;
+    padding: 5px;
+    font-size: 20px;
+    background: #3131310f;
 `;
 
-export const Button = styled.button`
+export const ButtonWithBorderRadius = styled.button`
     border-radius: 10px;
-    margin-top: 20px;
+    padding: 10px;
+    border: none;
+    cursor: pointer;
 `;

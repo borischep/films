@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useHistory, Link } from 'react-router-dom';
 import {
-  WrapperColumnCenter, Text, Input, Button,
+  WrapperColumnCenter, Text, Input, ButtonWithBorderRadius,
 } from '../../atoms/atoms.styled';
 
 const Login = () => {
@@ -17,13 +17,13 @@ const Login = () => {
       <Text>Username</Text>
       <Input name="user" value={username} onChange={(i) => setUsername(i.target.value)} />
       <Link to="/films">
-        <Button onClick={() => {
+        <ButtonWithBorderRadius onClick={() => {
           localStorage.setItem('username', username);
           localStorage.setItem('isAuthenticated', true);
         }}
         >
           Confirm
-        </Button>
+        </ButtonWithBorderRadius>
       </Link>
     </WrapperColumnCenter>
   );
