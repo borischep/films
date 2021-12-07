@@ -5,10 +5,8 @@ import { HeaderWrapper } from './header.styled';
 
 const Header = () => (
   <HeaderWrapper>
-    <div><Link to="/films">Films</Link></div>
-    <div>
-      <Link to="/profile"><ButtonWithBorderRadius type="button">Profile</ButtonWithBorderRadius></Link>
-    </div>
+    <Link to="/films">Films</Link>
+    <Link to="/profile"><ButtonWithBorderRadius type="button">Profile</ButtonWithBorderRadius></Link>
   </HeaderWrapper>
 );
 
