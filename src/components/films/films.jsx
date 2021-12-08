@@ -33,7 +33,7 @@ const Films = () => {
         pageStart={nextPage}
         loadMore={fetchData}
         hasMore={nextPage < 10}
-        loader={<h4>Loading...</h4>}
+        loader={<h4 key="loader">Loading...</h4>}
       >
         <WrapperRowWrap>
           {films.map((film) => (
