@@ -6,6 +6,7 @@ export const WrapperColumnCenter = styled.div`
     justify-content: center;
     align-items: center;
     padding-top: 10px;
+    background: ${(props) => props.theme.mainBg};
 `;
 
 export const WrapperRowWrap = styled.div`
@@ -18,6 +19,7 @@ export const WrapperRowWrap = styled.div`
 
 export const Text = styled.div`
     font-size: 24px;
+    color: ${(props) => props.theme.textColor};
 `;
 
 export const Input = styled.input`
@@ -27,7 +29,8 @@ export const Input = styled.input`
     margin: 10px;
     padding: 5px;
     font-size: 20px;
-    background: #3131310f;
+    background: ${(props) => props.theme.inputBg};
+    color: ${(props) => props.theme.inputText};
 `;
 
 export const ButtonWithBorderRadius = styled.button`
@@ -35,4 +38,16 @@ export const ButtonWithBorderRadius = styled.button`
     padding: 10px;
     border: none;
     cursor: pointer;
+    background: ${(props) => props.theme.btnBg};
+    color: ${(props) => props.theme.btnText};
+`;
+
+export const ButtonWithBorderRadiusWithRightMargin = styled.button`
+    border-radius: 10px;
+    padding: 10px;
+    border: none;
+    cursor: pointer;
+    margin-right: 10px;
+    background: ${(props) => props.theme.btnBg};
+    color: ${(props) => props.theme.btnText};
 `;
