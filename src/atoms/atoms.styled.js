@@ -40,14 +40,5 @@ export const ButtonWithBorderRadius = styled.button`
     cursor: pointer;
     background: ${(props) => props.theme.btnBg};
     color: ${(props) => props.theme.btnText};
-`;
-
-export const ButtonWithBorderRadiusWithRightMargin = styled.button`
-    border-radius: 10px;
-    padding: 10px;
-    border: none;
-    cursor: pointer;
-    margin-right: 10px;
-    background: ${(props) => props.theme.btnBg};
-    color: ${(props) => props.theme.btnText};
+    margin: ${(props) => props.withMargin};
 `;

@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import Switch from 'react-switch';
 import {
-  ButtonWithBorderRadius, ButtonWithBorderRadiusWithRightMargin, WrapperRowWrap,
+  ButtonWithBorderRadius, WrapperRowWrap,
 } from '../../atoms/atoms.styled';
 import { HeaderWrapper, SwitchWrapper, HeaderText } from './header.styled';
 
-// eslint-disable-next-line react/prop-types
 const Header = ({ onDarkThemeOn }) => {
   const [checked, setChecked] = useState(false);
 
@@ -39,13 +39,17 @@ const Header = ({ onDarkThemeOn }) => {
         {localStorage.getItem('isAuthenticated')
           ? (
             <div>
-              <Link to="/profile"><ButtonWithBorderRadiusWithRightMargin type="button">Profile</ButtonWithBorderRadiusWithRightMargin></Link>
+              <Link to="/profile"><ButtonWithBorderRadius withMargin="0 10px 0 0" type="button">Profile</ButtonWithBorderRadius></Link>
               <Link to="/"><ButtonWithBorderRadius type="button" onClick={onClickLogout}>Log out</ButtonWithBorderRadius></Link>
             </div>
           ) : null}
       </WrapperRowWrap>
     </HeaderWrapper>
   );
+};
+
+Header.propTypes = {
+  onDarkThemeOn: PropTypes.func.isRequired,
 };
 
 export default Header;
