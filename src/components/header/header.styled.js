@@ -1,8 +1,8 @@
 import styled from 'styled-components';
 
-// eslint-disable-next-line import/prefer-default-export
 export const HeaderWrapper = styled.div`
-    background: #b236ff;
+    background: ${(props) => props.theme.headerBg};
+    color: ${(props) => props.theme.headerText};
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -12,4 +12,18 @@ export const HeaderWrapper = styled.div`
     top: 0;
     left: 0;
     right: 0;
+`;
+
+export const SwitchWrapper = styled.label`
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-right: 10px;
+`;
+
+export const HeaderText = styled.div`
+    color: ${(props) => props.theme.headerText};
+    font-size: 24px;
+    margin-right: 30px;
+    margin-left: 10px;
 `;

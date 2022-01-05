@@ -13,6 +13,7 @@ export const FilmTitle = styled.div`
   margin-top: 10px;
   font-family: sans-serif;
   text-align: center;
+  color: ${(props) => props.theme.textColor};
 `;
 
 export const FilmPoster = styled.img`

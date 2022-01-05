@@ -5,6 +5,7 @@ export const FilmTitle = styled.div`
   font-family: sans-serif;
   text-align: center;
   margin: 20px;
+  color: ${(props) => props.theme.textColor};
 `;
 
 export const FilmPoster = styled.img`
@@ -16,6 +17,7 @@ export const FilmDescription = styled.div`
     font-size: 18px;
     text-align: left;
     width: 500px;
+    color: ${(props) => props.theme.textColor};
 `;
 
 export const FilmInfo = styled.div`
@@ -24,4 +26,5 @@ export const FilmInfo = styled.div`
     justify-content: space-around;
     align-items: center;
     width: 70%;
+    color: ${(props) => props.theme.textColor};
 `;
