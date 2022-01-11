@@ -17,9 +17,14 @@ const Films = React.lazy(() => import('./components/films'));
 
 const App = () => {
   const [darkTheme, setDarkTheme] = useState(false);
+  const [films, setFilms] = useState([]);
 
   const onDarkThemeOn = (darkThemeIsOn) => {
     setDarkTheme(darkThemeIsOn);
+  };
+
+  const onUpdateFilms = (filmsList) => {
+    setFilms(filmsList);
   };
 
   return (
@@ -29,10 +34,10 @@ const App = () => {
           <Header onDarkThemeOn={onDarkThemeOn} />
           <Switch>
             <Route path="/" exact component={Login} />
-            <ProtectedRoute path="/profile" component={Profile} />
-            <ProtectedRoute path="/films/:id" component={FilmPage} />
+            <ProtectedRoute path="/profile" component={Profile} films={films} updateFilms={onUpdateFilms} />
+            <Route path="/films/:id" component={FilmPage} films={films} onUpdateFilms={onUpdateFilms} />
             <Suspense fallback={<div>Loading...</div>}>
-              <ProtectedRoute path="/films" component={Films} />
+              <ProtectedRoute path="/films" component={Films} updateFilms={onUpdateFilms} films={films} />
             </Suspense>
           </Switch>
         </Router>
