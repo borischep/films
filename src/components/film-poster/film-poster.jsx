@@ -4,42 +4,60 @@ import { FilmPosterWrapper, FilmPosterImg } from './film-poster.styled';
 import { ReactComponent as LikedIcon } from '../../assets/liked.svg';
 import { ReactComponent as WatchIcon } from '../../assets/watch.svg';
 import { ReactComponent as WatchedIcon } from '../../assets/watched.svg';
-import './film-poster.css';
 
-const FilmPoster = ({ film, onUpdateFilms }) => {
+const FilmPoster = ({
+  filmDetails, films, onUpdateFilms, onUpdateUserFilms,
+}) => {
   const onLiked = () => {
-    onUpdateFilms((prev) => prev.map((item) => (item.id === film.id
-      ? { ...item, liked: !item.liked }
-      : item)));
+    onUpdateFilms([...films.map((item) => (item.id !== filmDetails.id
+      ? item
+      : { ...item, liked: !item.liked }))]);
+    onUpdateUserFilms({ ...filmDetails, liked: !filmDetails.liked });
   };
 
   const onWatched = () => {
-    onUpdateFilms((prev) => prev.map((item) => (item.id === film.id
-      ? { ...item, watched: !item.watched }
-      : item)));
+    onUpdateFilms([...films.map((item) => (item.id !== filmDetails.id
+      ? item
+      : { ...item, watched: !item.watched }))]);
+    onUpdateUserFilms({ ...filmDetails, watched: !filmDetails.watched });
   };
 
   const onToWatch = () => {
-    onUpdateFilms((prev) => prev.map((item) => (item.id === film.id
-      ? { ...item, toWatch: !item.toWatch }
-      : item)));
+    onUpdateFilms([...films.map((item) => (item.id !== filmDetails.id
+      ? item
+      : { ...item, toWatch: !item.toWatch }))]);
+    onUpdateUserFilms({ ...filmDetails, toWatch: !filmDetails.toWatch });
   };
 
   return (
     <FilmPosterWrapper>
-      <LikedIcon onClick={onLiked} className={`poster-icon ${film.liked ? 'active' : 'inactive'}`} alt="poster" />
-      <WatchIcon onClick={onToWatch} className={`poster-icon ${film.toWatch ? 'active' : 'inactive'}`} alt="poster" />
-      <WatchedIcon onClick={onWatched} className={`poster-icon ${film.watched ? 'active' : 'inactive'}`} alt="poster" />
-      <FilmPosterImg className="poster" src={`https://image.tmdb.org/t/p/w500${film.poster_path}`} alt="poster" />
+      <LikedIcon onClick={onLiked} className={`poster-icon ${filmDetails.liked ? 'active' : 'inactive'}`} alt="img" />
+      <WatchIcon
+        onClick={onToWatch}
+        className={`poster-icon ${filmDetails.toWatch ? 'active' : 'inactive'}`}
+        alt="img"
+      />
+      <WatchedIcon
+        onClick={onWatched}
+        className={`poster-icon ${filmDetails.watched ? 'active' : 'inactive'}`}
+        alt="img"
+      />
+      <FilmPosterImg className="poster" src={`https://image.tmdb.org/t/p/w500${filmDetails.poster_path}`} alt="img" />
     </FilmPosterWrapper>
   );
 };
 
 FilmPoster.propTypes = {
-  film: PropTypes.objectOf(PropTypes.oneOfType([
+  films: PropTypes.arrayOf(PropTypes.object),
+  filmDetails: PropTypes.objectOf(PropTypes.oneOfType([
     PropTypes.object, PropTypes.bool, PropTypes.string, PropTypes.number, PropTypes.array,
   ])).isRequired,
   onUpdateFilms: PropTypes.func.isRequired,
+  onUpdateUserFilms: PropTypes.func.isRequired,
+};
+
+FilmPoster.defaultProps = {
+  films: [],
 };
 
 export default FilmPoster;

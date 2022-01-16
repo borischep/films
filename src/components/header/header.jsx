@@ -39,8 +39,12 @@ const Header = ({ onDarkThemeOn }) => {
         {localStorage.getItem('isAuthenticated')
           ? (
             <div>
-              <Link to="/profile"><ButtonWithBorderRadius withMargin="0 10px 0 0" type="button">Profile</ButtonWithBorderRadius></Link>
-              <Link to="/"><ButtonWithBorderRadius type="button" onClick={onClickLogout}>Log out</ButtonWithBorderRadius></Link>
+              <Link to="/profile">
+                <ButtonWithBorderRadius withMargin="0 10px 0 0" type="button">Profile</ButtonWithBorderRadius>
+              </Link>
+              <Link to="/">
+                <ButtonWithBorderRadius type="button" onClick={onClickLogout}>Log out</ButtonWithBorderRadius>
+              </Link>
             </div>
           ) : null}
       </WrapperRowWrap>

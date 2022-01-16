@@ -5,8 +5,9 @@ import { WrapperColumnCenter, WrapperRowWrap } from '../../atoms/atoms.styled';
 import FilmsListItem from '../films-list-item';
 import ErrorMessage from '../error-message/error-message';
 
-const Films = ({ films, onUpdateFilms }) => {
-  const [nextPage, setNextPage] = useState(1);
+const Films = ({
+  films, onUpdateFilms, userFilms, onUpdateUserFilms, nextPage, setNextPage,
+}) => {
   const [error, setError] = useState(false);
 
   const fetchData = () => {
@@ -19,21 +20,21 @@ const Films = ({ films, onUpdateFilms }) => {
         throw new Error('Something went wrong');
       })
       .then((res) => {
-        const newFilms = res.results.map((item) => {
-          item.liked = false;
-          item.watched = false;
-          item.toWatch = false;
+        onUpdateFilms([...films, ...res.results.map((item) => {
+          const filmMarks = userFilms.find((film) => film.id === item.id);
+          item.liked = filmMarks ? filmMarks.liked : false;
+          item.watched = filmMarks ? filmMarks.watched : false;
+          item.toWatch = filmMarks ? filmMarks.toWatch : false;
           return item;
-        });
-        onUpdateFilms((prev) => [...prev, ...newFilms]);
-        setNextPage((page) => page + 1);
+        })]);
+        setNextPage(nextPage + 1);
       })
       .catch(() => {
         setError(true);
       });
   };
 
-  const filmsList = error || !films
+  const filmsList = error
     ? <ErrorMessage />
     : (
       <InfiniteScroll
@@ -44,7 +45,13 @@ const Films = ({ films, onUpdateFilms }) => {
       >
         <WrapperRowWrap>
           {films.map((film) => (
-            <FilmsListItem key={film.id} onUpdateFilms={onUpdateFilms} filmDetails={film} />
+            <FilmsListItem
+              key={film.id + nextPage}
+              onUpdateFilms={onUpdateFilms}
+              filmDetails={film}
+              films={films}
+              onUpdateUserFilms={onUpdateUserFilms}
+            />
           ))}
         </WrapperRowWrap>
       </InfiniteScroll>
@@ -58,8 +65,17 @@ const Films = ({ films, onUpdateFilms }) => {
 };
 
 Films.propTypes = {
-  films: PropTypes.arrayOf(PropTypes.object).isRequired,
+  films: PropTypes.arrayOf(PropTypes.object),
   onUpdateFilms: PropTypes.func.isRequired,
+  userFilms: PropTypes.arrayOf(PropTypes.object),
+  onUpdateUserFilms: PropTypes.func.isRequired,
+  nextPage: PropTypes.number.isRequired,
+  setNextPage: PropTypes.func.isRequired,
+};
+
+Films.defaultProps = {
+  films: [],
+  userFilms: [],
 };
 
 export default Films;
