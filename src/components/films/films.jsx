@@ -20,13 +20,14 @@ const Films = ({
         throw new Error('Something went wrong');
       })
       .then((res) => {
-        onUpdateFilms([...films, ...res.results.map((item) => {
-          const filmMarks = userFilms.find((film) => film.id === item.id);
-          item.liked = filmMarks ? filmMarks.liked : false;
-          item.watched = filmMarks ? filmMarks.watched : false;
-          item.toWatch = filmMarks ? filmMarks.toWatch : false;
-          return item;
-        })]);
+        onUpdateFilms([...films.filter((item) => (!res.results.find((film) => film.id === item.id))),
+          ...res.results.map((item) => {
+            const filmMarks = userFilms.find((film) => film.id === item.id);
+            item.liked = filmMarks ? filmMarks.liked : false;
+            item.watched = filmMarks ? filmMarks.watched : false;
+            item.toWatch = filmMarks ? filmMarks.toWatch : false;
+            return item;
+          })]);
         setNextPage(nextPage + 1);
       })
       .catch(() => {

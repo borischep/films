@@ -5,7 +5,7 @@ import {
 } from 'react-tabs';
 import { Text, WrapperColumnCenter, WrapperRowWrap } from '../../atoms/atoms.styled';
 import FilmsListItem from '../films-list-item';
-import './profile.css';
+import 'react-tabs/style/react-tabs.css';
 
 const Profile = ({
   films, onUpdateFilms, userFilms, onUpdateUserFilms,
@@ -15,6 +15,23 @@ const Profile = ({
   useEffect(() => {
     setUsername(localStorage.getItem('username'));
   }, []);
+
+  useEffect(() => {
+    userFilms.forEach((userFilm) => {
+      if (!films.find((film) => film.id === userFilm.id)) {
+        fetch(`https://api.themoviedb.org/3/movie/${userFilm.id}?api_key=${process.env.REACT_APP_API_KEY}`)
+          .then((res) => res.json())
+          .then((res) => {
+            onUpdateFilms((prev) => [...prev, {
+              ...res,
+              liked: userFilm.liked,
+              watched: userFilm.watched,
+              toWatch: userFilm.toWatch,
+            }]);
+          });
+      }
+    });
+  }, [userFilms]);
 
   return (
     <WrapperColumnCenter>
@@ -28,7 +45,7 @@ const Profile = ({
 
         <TabPanel>
           <WrapperRowWrap>
-            {userFilms.map((film) => (film.liked
+            {films.map((film) => (film.liked
               ? (
                 <FilmsListItem
                   key={film.id}
@@ -43,7 +60,7 @@ const Profile = ({
         </TabPanel>
         <TabPanel>
           <WrapperRowWrap>
-            {userFilms.map((film) => (film.watched
+            {films.map((film) => (film.watched
               ? (
                 <FilmsListItem
                   key={film.id}
@@ -58,7 +75,7 @@ const Profile = ({
         </TabPanel>
         <TabPanel>
           <WrapperRowWrap>
-            {userFilms.map((film) => (film.toWatch
+            {films.map((film) => (film.toWatch
               ? (
                 <FilmsListItem
                   key={film.id}

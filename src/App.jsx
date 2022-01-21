@@ -23,20 +23,30 @@ const App = () => {
 
   useEffect(() => {
     setUserFilms(JSON.parse(localStorage.getItem('userFilms')));
-    setFilms(userFilms);
   }, []);
+
+  useEffect(() => {
+    if (!userFilms) {
+      setUserFilms([]);
+      localStorage.setItem('userFilms', JSON.stringify([]));
+    } else {
+      localStorage.setItem('userFilms', JSON.stringify(userFilms));
+    }
+  }, [userFilms]);
 
   const onDarkThemeOn = (darkThemeIsOn) => {
     setDarkTheme(darkThemeIsOn);
   };
 
-  const onUpdateUserFilms = async (film) => {
+  const onUpdateUserFilms = (film) => {
     if (!film.liked && !film.watched && !film.toWatch) {
-      await setUserFilms((prev) => [...prev.filter((item) => item.id !== film.id)]);
+      setUserFilms((prev) => [...prev.filter((item) => item.id !== film.id)]);
     } else {
-      await setUserFilms((prev) => [...prev.filter((item) => item.id !== film.id), film]);
+      setUserFilms((prev) => [...prev.filter((item) => item.id !== film.id),
+        {
+          id: film.id, liked: film.liked, watched: film.watched, toWatch: film.toWatch,
+        }]);
     }
-    localStorage.setItem('userFilms', JSON.stringify(userFilms));
   };
 
   const onUpdateFilms = (filmsList) => {
