@@ -22,16 +22,11 @@ const App = () => {
   const [nextPage, setNextPage] = useState(1);
 
   useEffect(() => {
-    setUserFilms(JSON.parse(localStorage.getItem('userFilms')));
+    setUserFilms(JSON.parse(localStorage.getItem('userFilms')) || []);
   }, []);
 
   useEffect(() => {
-    if (!userFilms) {
-      setUserFilms([]);
-      localStorage.setItem('userFilms', JSON.stringify([]));
-    } else {
-      localStorage.setItem('userFilms', JSON.stringify(userFilms));
-    }
+    localStorage.setItem('userFilms', JSON.stringify(userFilms));
   }, [userFilms]);
 
   const onDarkThemeOn = (darkThemeIsOn) => {
