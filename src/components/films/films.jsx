@@ -1,32 +1,41 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
 import InfiniteScroll from 'react-infinite-scroller';
-import { FilmListItem, FilmTitle, FilmPoster } from './films.styled';
+import PropTypes from 'prop-types';
 import { WrapperColumnCenter, WrapperRowWrap } from '../../atoms/atoms.styled';
+import FilmsListItem from '../films-list-item';
 import ErrorMessage from '../error-message/error-message';
 
-const Films = () => {
-  const [films, setFilms] = useState([]);
-  const [nextPage, setNextPage] = useState(1);
+const Films = ({
+  films, onUpdateFilms, userFilms, onUpdateUserFilms, nextPage, setNextPage,
+}) => {
   const [error, setError] = useState(false);
+
   const fetchData = () => {
     fetch(`https://api.themoviedb.org/3/movie/popular/?api_key=${process.env.REACT_APP_API_KEY}&page=${nextPage}`)
       .then((res) => {
         if (res.ok) {
           return res.json();
         }
+        setError(true);
         throw new Error('Something went wrong');
       })
       .then((res) => {
-        setFilms((prev) => [...prev, ...res.results]);
-        setNextPage((page) => page + 1);
+        onUpdateFilms([...films.filter((item) => (!res.results.find((film) => film.id === item.id))),
+          ...res.results.map((item) => {
+            const filmMarks = userFilms.find((film) => film.id === item.id);
+            item.liked = filmMarks ? filmMarks.liked : false;
+            item.watched = filmMarks ? filmMarks.watched : false;
+            item.toWatch = filmMarks ? filmMarks.toWatch : false;
+            return item;
+          })]);
+        setNextPage(nextPage + 1);
       })
       .catch(() => {
         setError(true);
       });
   };
 
-  const filmsList = error || !films
+  const filmsList = error
     ? <ErrorMessage />
     : (
       <InfiniteScroll
@@ -37,10 +46,13 @@ const Films = () => {
       >
         <WrapperRowWrap>
           {films.map((film) => (
-            <FilmListItem key={film.id}>
-              <Link to={`/films/${film.id}`}><FilmPoster src={`https://image.tmdb.org/t/p/w500${film.poster_path}`} alt="poster" /></Link>
-              <Link to={`/films/${film.id}`}><FilmTitle>{film.title}</FilmTitle></Link>
-            </FilmListItem>
+            <FilmsListItem
+              key={film.id + nextPage}
+              onUpdateFilms={onUpdateFilms}
+              filmDetails={film}
+              films={films}
+              onUpdateUserFilms={onUpdateUserFilms}
+            />
           ))}
         </WrapperRowWrap>
       </InfiniteScroll>
@@ -51,6 +63,20 @@ const Films = () => {
       {filmsList}
     </WrapperColumnCenter>
   );
+};
+
+Films.propTypes = {
+  films: PropTypes.arrayOf(PropTypes.object),
+  onUpdateFilms: PropTypes.func.isRequired,
+  userFilms: PropTypes.arrayOf(PropTypes.object),
+  onUpdateUserFilms: PropTypes.func.isRequired,
+  nextPage: PropTypes.number.isRequired,
+  setNextPage: PropTypes.func.isRequired,
+};
+
+Films.defaultProps = {
+  films: [],
+  userFilms: [],
 };
 
 export default Films;
