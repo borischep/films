@@ -1,10 +1,10 @@
 import styled from 'styled-components';
 
-export const WrapperColumnCenter = styled.div`
+export const WrapperColumn = styled.div`
     display: flex;
     flex-direction: column;
     justify-content: center;
-    align-items: center;
+    align-items: ${(props) => props.alignSide};
     padding-top: 10px;
     background: ${(props) => props.theme.mainBg};
 `;
@@ -23,14 +23,29 @@ export const Text = styled.div`
 `;
 
 export const Input = styled.input`
-    width: 150px;
+    width: ${(props) => props.width};
     border-radius: 10px;
     border: none;
-    margin: 10px;
+    margin: ${(props) => props.margin};
     padding: 5px;
     font-size: 20px;
+    border: ${(props) => props.border};
     background: ${(props) => props.theme.inputBg};
     color: ${(props) => props.theme.inputText};
+    box-sizing: border-box;
+`;
+
+export const Select = styled.select`
+    width: ${(props) => props.width};
+    border-radius: 10px;
+    border: none;
+    margin: ${(props) => props.margin};
+    padding: 5px;
+    font-size: 20px;
+    border: ${(props) => props.border};
+    background: ${(props) => props.theme.inputBg};
+    color: ${(props) => props.theme.inputText};
+    box-sizing: border-box;
 `;
 
 export const ButtonWithBorderRadius = styled.button`

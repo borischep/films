@@ -1,31 +1,23 @@
-import React, { useState, useEffect } from 'react';
-import { useHistory, Link } from 'react-router-dom';
+import React from 'react';
+import { useHistory } from 'react-router-dom';
 import {
-  WrapperColumnCenter, Text, Input, ButtonWithBorderRadius,
+  WrapperColumn,
 } from '../../atoms/atoms.styled';
+import UserInfo from '../user-info';
 
 const Login = () => {
-  const [username, setUsername] = useState('');
   const history = useHistory();
 
-  useEffect(() => {
-    if (localStorage.getItem('username')) history.push('/films');
-  }, [history]);
-
   return (
-    <WrapperColumnCenter>
-      <Text>Username</Text>
-      <Input name="user" value={username} onChange={(i) => setUsername(i.target.value)} />
-      <Link to="/films">
-        <ButtonWithBorderRadius onClick={() => {
-          localStorage.setItem('username', username);
+    <WrapperColumn alignSide="center">
+      <UserInfo
+        editInfo
+        afterSubmit={() => {
           localStorage.setItem('isAuthenticated', true);
+          history.push('/films');
         }}
-        >
-          Confirm
-        </ButtonWithBorderRadius>
-      </Link>
-    </WrapperColumnCenter>
+      />
+    </WrapperColumn>
   );
 };
 

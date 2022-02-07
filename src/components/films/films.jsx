@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroller';
 import PropTypes from 'prop-types';
-import { WrapperColumnCenter, WrapperRowWrap } from '../../atoms/atoms.styled';
+import { WrapperColumn, WrapperRowWrap } from '../../atoms/atoms.styled';
 import FilmsListItem from '../films-list-item';
 import ErrorMessage from '../error-message/error-message';
 
@@ -59,9 +59,9 @@ const Films = ({
     );
 
   return (
-    <WrapperColumnCenter>
+    <WrapperColumn alignSide="center">
       {filmsList}
-    </WrapperColumnCenter>
+    </WrapperColumn>
   );
 };
 

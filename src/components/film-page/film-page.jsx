@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { WrapperColumnCenter } from '../../atoms/atoms.styled';
+import { WrapperColumn } from '../../atoms/atoms.styled';
 import FilmPoster from '../film-poster';
 import {
   FilmTitle, FilmDescription, FilmInfo,
@@ -32,7 +32,7 @@ const FilmPage = ({
   }, [films, filmDetails]);
 
   return filmDetails ? (
-    <WrapperColumnCenter>
+    <WrapperColumn alignSide="center">
       <FilmTitle>{filmDetails.original_title}</FilmTitle>
       <FilmInfo>
         <FilmPoster
@@ -43,11 +43,11 @@ const FilmPage = ({
         />
         <FilmDescription>{filmDetails.overview}</FilmDescription>
       </FilmInfo>
-    </WrapperColumnCenter>
+    </WrapperColumn>
   ) : (
-    <WrapperColumnCenter>
+    <WrapperColumn alignSide="center">
       <ErrorMessage />
-    </WrapperColumnCenter>
+    </WrapperColumn>
   );
 };
 

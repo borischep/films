@@ -10,8 +10,8 @@ import Login from './components/login';
 import ProtectedRoute from './components/protected-route';
 import FilmPage from './components/film-page';
 import './global.css';
-import Header from './components/header/header';
-import Profile from './components/profile/profile';
+import Header from './components/header';
+import Profile from './components/profile';
 
 const Films = React.lazy(() => import('./components/films'));
 

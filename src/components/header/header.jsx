@@ -11,8 +11,9 @@ const Header = ({ onDarkThemeOn }) => {
   const [checked, setChecked] = useState(false);
 
   const onClickLogout = () => {
-    localStorage.removeItem('username');
+    localStorage.removeItem('userInfo');
     localStorage.removeItem('isAuthenticated');
+    localStorage.removeItem('userFilms');
   };
 
   const onThemeChanged = (value) => {
