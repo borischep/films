@@ -15,31 +15,18 @@ const UserInfo = ({ editInfo, afterSubmit }) => {
     'Action', 'Adventure', 'Comedy', 'Drama', 'Historical', 'Horror', 'Science fiction', 'War films', 'Westerns',
   ];
 
-  const INITIAL_FORM_STATE = {
-    username: '',
-    email: '',
-    birthday: '',
-    gender: genders[0],
-    genre: genres[0],
-    filmsAmount: 0,
-  };
-
   const [editUserInfo, setEditUserInfo] = useState(editInfo);
-  const [userInfo, setUserInfo] = useState(INITIAL_FORM_STATE);
+  const [userInfo, setUserInfo] = useState({});
 
   useEffect(() => {
     setUserInfo(JSON.parse(localStorage.getItem('userInfo')));
   }, []);
 
   const onSubmit = (form) => {
-    if (Object.values(form).includes('')) {
-      alert('Fill all fields');
-    } else {
-      setUserInfo(form);
-      localStorage.setItem('userInfo', JSON.stringify(form));
-      setEditUserInfo((prev) => !prev);
-      afterSubmit();
-    }
+    setUserInfo(form);
+    localStorage.setItem('userInfo', JSON.stringify(form));
+    setEditUserInfo((prev) => !prev);
+    afterSubmit();
   };
 
   return editUserInfo ? (
@@ -61,12 +48,12 @@ const UserInfo = ({ editInfo, afterSubmit }) => {
   )
     : (
       <WrapperColumn alignSide="left">
-        <Text>Username: {userInfo.username}</Text>
-        <Text>Email: {userInfo.email}</Text>
-        <Text>Birthday: {userInfo.birthday}</Text>
-        <Text>Gender: {userInfo.gender}</Text>
-        <Text>Favorite genre: {userInfo.genre}</Text>
-        <Text>How many films do you want to watch in month: {userInfo.filmsAmount}</Text>
+        {userInfo.username ? <Text>Username: {userInfo.username}</Text> : null}
+        {userInfo.email ? <Text>Email: {userInfo.email}</Text> : null}
+        {userInfo.birthday ? <Text>Birthday: {userInfo.birthday}</Text> : null}
+        {userInfo.gender ? <Text>Gender: {userInfo.gender}</Text> : null}
+        {userInfo.genre ? <Text>Favorite genre: {userInfo.genre}</Text> : null}
+        {userInfo.filmsAmount ? <Text>How many films you want to watch in month: {userInfo.filmsAmount}</Text> : null}
         <WrapperColumn alignSide="center">
           <ButtonWithBorderRadius onClick={() => {
             setEditUserInfo((prev) => !prev);

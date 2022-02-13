@@ -21,6 +21,7 @@ const FormSelect = ({
         value={form[name]}
         onChange={handleFormChange}
       >
+        <option defaultChecked value="">Not selected</option>
         {
           options.map((el) => (
             <option key={el} value={el}>{el}</option>

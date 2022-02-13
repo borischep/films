@@ -20,6 +20,7 @@ const App = () => {
   const [films, setFilms] = useState([]);
   const [userFilms, setUserFilms] = useState([]);
   const [nextPage, setNextPage] = useState(1);
+  const [isLogged, setIsLogged] = useState(false);
 
   useEffect(() => {
     setUserFilms(JSON.parse(localStorage.getItem('userFilms')) || []);
@@ -52,9 +53,15 @@ const App = () => {
     <div className={darkTheme ? 'dark' : ''}>
       <ThemeProvider theme={darkTheme ? DarkTheme : LightTheme}>
         <Router>
-          <Header onDarkThemeOn={onDarkThemeOn} />
+          <Header isLogged={isLogged} setIsLogged={setIsLogged} onDarkThemeOn={onDarkThemeOn} />
           <Switch>
-            <Route path="/" exact component={Login} />
+            <Route
+              path="/"
+              exact
+              render={() => (
+                <Login setIsLogged={setIsLogged} />
+              )}
+            />
             <ProtectedRoute
               path="/profile"
               component={Profile}
