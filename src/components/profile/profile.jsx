@@ -1,21 +1,18 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import {
   Tab, Tabs, TabList, TabPanel,
 } from 'react-tabs';
-import { Text, WrapperColumnCenter, WrapperRowWrap } from '../../atoms/atoms.styled';
+import {
+  WrapperColumn, WrapperRowWrap,
+} from '../../atoms/atoms.styled';
 import FilmsListItem from '../films-list-item';
+import UserInfo from '../user-info';
 import 'react-tabs/style/react-tabs.css';
 
 const Profile = ({
   films, onUpdateFilms, userFilms, onUpdateUserFilms,
 }) => {
-  const [username, setUsername] = useState('');
-
-  useEffect(() => {
-    setUsername(localStorage.getItem('username'));
-  }, []);
-
   useEffect(() => {
     userFilms.forEach((userFilm) => {
       if (!films.find((film) => film.id === userFilm.id)) {
@@ -34,8 +31,8 @@ const Profile = ({
   }, [userFilms]);
 
   return (
-    <WrapperColumnCenter>
-      <Text>{username}</Text>
+    <WrapperColumn alignSide="center">
+      <UserInfo />
       <Tabs>
         <TabList>
           <Tab>Liked</Tab>
@@ -89,7 +86,7 @@ const Profile = ({
           </WrapperRowWrap>
         </TabPanel>
       </Tabs>
-    </WrapperColumnCenter>
+    </WrapperColumn>
   );
 };
 

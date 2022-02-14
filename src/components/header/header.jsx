@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import Switch from 'react-switch';
@@ -7,13 +7,19 @@ import {
 } from '../../atoms/atoms.styled';
 import { HeaderWrapper, SwitchWrapper, HeaderText } from './header.styled';
 
-const Header = ({ onDarkThemeOn }) => {
+const Header = ({ onDarkThemeOn, setIsLogged, isLogged }) => {
   const [checked, setChecked] = useState(false);
 
   const onClickLogout = () => {
-    localStorage.removeItem('username');
+    localStorage.removeItem('userInfo');
     localStorage.removeItem('isAuthenticated');
+    localStorage.removeItem('userFilms');
+    setIsLogged(false);
   };
+
+  useEffect(() => {
+    setIsLogged(localStorage.getItem('isAuthenticated') === 'true');
+  }, []);
 
   const onThemeChanged = (value) => {
     setChecked((prev) => !prev);
@@ -36,7 +42,7 @@ const Header = ({ onDarkThemeOn }) => {
           />
           <HeaderText>Dark theme</HeaderText>
         </SwitchWrapper>
-        {localStorage.getItem('isAuthenticated')
+        {isLogged
           ? (
             <div>
               <Link to="/profile">
@@ -54,6 +60,12 @@ const Header = ({ onDarkThemeOn }) => {
 
 Header.propTypes = {
   onDarkThemeOn: PropTypes.func.isRequired,
+  isLogged: PropTypes.bool,
+  setIsLogged: PropTypes.func.isRequired,
+};
+
+Header.defaultProps = {
+  isLogged: false,
 };
 
 export default Header;

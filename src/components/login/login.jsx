@@ -1,32 +1,52 @@
 import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import { useHistory, Link } from 'react-router-dom';
 import {
-  WrapperColumnCenter, Text, Input, ButtonWithBorderRadius,
+  WrapperColumn, Text, Input, ButtonWithBorderRadius,
 } from '../../atoms/atoms.styled';
 
-const Login = () => {
+const Login = ({ setIsLogged }) => {
   const [username, setUsername] = useState('');
   const history = useHistory();
+
+  const userInfoInitialState = {
+    email: '',
+    birthday: '',
+    gender: '',
+    genre: '',
+    filmsAmount: '',
+  };
 
   useEffect(() => {
     if (localStorage.getItem('username')) history.push('/films');
   }, [history]);
 
   return (
-    <WrapperColumnCenter>
+    <WrapperColumn alignSide="center">
       <Text>Username</Text>
       <Input name="user" value={username} onChange={(i) => setUsername(i.target.value)} />
       <Link to="/films">
-        <ButtonWithBorderRadius onClick={() => {
-          localStorage.setItem('username', username);
-          localStorage.setItem('isAuthenticated', true);
-        }}
+        <ButtonWithBorderRadius
+          withMargin="10px"
+          onClick={() => {
+            if (username) {
+              localStorage.setItem('userInfo', JSON.stringify({ username, ...userInfoInitialState }));
+              localStorage.setItem('isAuthenticated', true);
+              setIsLogged(true);
+            } else {
+              alert('Input cannot be empty');
+            }
+          }}
         >
           Confirm
         </ButtonWithBorderRadius>
       </Link>
-    </WrapperColumnCenter>
+    </WrapperColumn>
   );
+};
+
+Login.propTypes = {
+  setIsLogged: PropTypes.func.isRequired,
 };
 
 export default Login;
