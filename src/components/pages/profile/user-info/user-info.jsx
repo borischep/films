@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { Text, WrapperColumn, ButtonWithBorderRadius } from '../../atoms/atoms.styled';
-import FormInput from '../form-input';
-import FormSelect from '../form-select';
-import Form from '../form';
+import { Text, WrapperColumn, ButtonWithBorderRadius } from 'atoms/atoms.styled';
+import FormInput from 'components/common/form/form-input';
+import FormSelect from 'components/common/form/form-select';
+import Form from 'components/common/form';
 import 'react-tabs/style/react-tabs.css';
 
 const UserInfo = ({ editInfo, afterSubmit }) => {

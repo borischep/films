@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { ButtonWithBorderRadius, WrapperColumn } from '../../atoms/atoms.styled';
+import { ButtonWithBorderRadius, WrapperColumn } from 'atoms/atoms.styled';
 
 export const FormContext = React.createContext({
   form: {},

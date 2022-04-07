@@ -1,9 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { ReactComponent as LikedIcon } from 'assets/liked.svg';
+import { ReactComponent as WatchIcon } from 'assets/watch.svg';
+import { ReactComponent as WatchedIcon } from 'assets/watched.svg';
 import { FilmPosterWrapper, FilmPosterImg } from './film-poster.styled';
-import { ReactComponent as LikedIcon } from '../../assets/liked.svg';
-import { ReactComponent as WatchIcon } from '../../assets/watch.svg';
-import { ReactComponent as WatchedIcon } from '../../assets/watched.svg';
 
 const FilmPoster = ({
   filmDetails, films, onUpdateFilms, onUpdateUserFilms,

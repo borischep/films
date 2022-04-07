@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { useHistory, Link } from 'react-router-dom';
 import {
   WrapperColumn, Text, Input, ButtonWithBorderRadius,
-} from '../../atoms/atoms.styled';
+} from 'atoms/atoms.styled';
 
 const Login = ({ setIsLogged }) => {
   const [username, setUsername] = useState('');

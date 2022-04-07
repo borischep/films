@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { WrapperColumn } from '../../atoms/atoms.styled';
-import FilmPoster from '../film-poster';
+import { WrapperColumn } from 'atoms/atoms.styled';
+import FilmPoster from 'components/common/film-poster';
+import ErrorMessage from 'components/common/error-message';
 import {
   FilmTitle, FilmDescription, FilmInfo,
 } from './film-page.styled';
-import ErrorMessage from '../error-message/error-message';
 
 const FilmPage = ({
   match: { params: { id } }, films, onUpdateFilms, userFilms, onUpdateUserFilms,

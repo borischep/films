@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
+import FilmPoster from 'components/common/film-poster';
 import { FilmListItemWrapper, FilmTitle } from './films-list-item.styled';
-import FilmPoster from '../film-poster';
 
 const FilmsListItem = ({
   filmDetails, films, onUpdateFilms, onUpdateUserFilms,

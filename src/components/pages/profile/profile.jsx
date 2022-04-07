@@ -5,9 +5,9 @@ import {
 } from 'react-tabs';
 import {
   WrapperColumn, WrapperRowWrap,
-} from '../../atoms/atoms.styled';
-import FilmsListItem from '../films-list-item';
-import UserInfo from '../user-info';
+} from 'atoms/atoms.styled';
+import FilmsListItem from 'components/common/films-list-item';
+import UserInfo from './user-info';
 import 'react-tabs/style/react-tabs.css';
 
 const Profile = ({

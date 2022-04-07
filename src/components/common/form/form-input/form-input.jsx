@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
-import { WrapperColumn, Input } from '../../atoms/atoms.styled';
-import { FormContext } from '../form/form';
+import { WrapperColumn, Input } from 'atoms/atoms.styled';
+import { FormContext } from '../form';
 
 const FormInput = ({
   label, type, name, placeholder,

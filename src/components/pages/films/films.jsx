@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroller';
 import PropTypes from 'prop-types';
-import { WrapperColumn, WrapperRowWrap } from '../../atoms/atoms.styled';
-import FilmsListItem from '../films-list-item';
-import ErrorMessage from '../error-message/error-message';
+import { WrapperColumn, WrapperRowWrap } from 'atoms/atoms.styled';
+import FilmsListItem from 'components/common/films-list-item';
+import ErrorMessage from 'components/common/error-message';
 
 const Films = ({
   films, onUpdateFilms, userFilms, onUpdateUserFilms, nextPage, setNextPage,
