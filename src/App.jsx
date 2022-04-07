@@ -5,15 +5,15 @@ import {
   Route,
 } from 'react-router-dom';
 import { ThemeProvider } from 'styled-components';
-import { LightTheme, DarkTheme } from './theme.styled';
-import Login from './components/login';
-import ProtectedRoute from './components/protected-route';
-import FilmPage from './components/film-page';
-import './global.css';
-import Header from './components/header';
-import Profile from './components/profile';
+import { LightTheme, DarkTheme } from 'theme.styled';
+import Login from 'components/pages/login';
+import ProtectedRoute from 'components/routes/protected-route';
+import FilmPage from 'components/pages/film-page';
+import 'global.css';
+import Header from 'components/common/header';
+import Profile from 'components/pages/profile';
 
-const Films = React.lazy(() => import('./components/films'));
+const Films = React.lazy(() => import('components/pages/films'));
 
 const App = () => {
   const [darkTheme, setDarkTheme] = useState(false);

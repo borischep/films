@@ -23,5 +23,13 @@
         "react/jsx-props-no-spreading": "off",
         "max-len": ["error", { "code": 120 }],
         "react/jsx-one-expression-per-line": "off"
+    },
+    "settings": {
+        "import/resolver": {
+            "node": {
+                "paths": ["src"],
+                "extensions": [".js", ".jsx", ".ts", ".tsx"]
+            }
+        }
     }
 }

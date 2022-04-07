@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import Switch from 'react-switch';
 import {
   ButtonWithBorderRadius, WrapperRowWrap,
-} from '../../atoms/atoms.styled';
+} from 'atoms/atoms.styled';
 import { HeaderWrapper, SwitchWrapper, HeaderText } from './header.styled';
 
 const Header = ({ onDarkThemeOn, setIsLogged, isLogged }) => {
