@@ -1,11 +1,31 @@
 /* eslint-disable react/require-default-props */
-import React from 'react';
-import PropTypes from 'prop-types';
+import React, { FC } from 'react';
 import { Redirect, Route, useLocation } from 'react-router-dom';
+import { IFilm } from 'interfaces/film.interface';
+
+interface IFCProps {
+  userFilms: IFilm[];
+  films: IFilm[];
+  nextPage: number;
+  setNextPage: (f: number) => void;
+  onUpdateFilms: (f: any) => void;
+  onUpdateUserFilms: (f: IFilm) => void;
+}
+
+interface IProps {
+  path: string;
+  component: FC<IFCProps>,
+  films: IFilm[];
+  userFilms: IFilm[];
+  nextPage: number;
+  setNextPage: (f: number) => void;
+  updateFilms: (f: any) => void;
+  updateUserFilms: (f: IFilm) => void;
+}
 
 const ProtectedRoute = ({
   path, component: Component, updateFilms, films, userFilms, updateUserFilms, nextPage, setNextPage,
-}) => {
+}: IProps) => {
   const location = useLocation();
   return localStorage.getItem('isAuthenticated') ? (
     <Route path={path} exact>
@@ -26,25 +46,6 @@ const ProtectedRoute = ({
       }}
     />
   );
-};
-
-ProtectedRoute.propTypes = {
-  path: PropTypes.string.isRequired,
-  component: PropTypes.oneOfType([
-    PropTypes.func,
-    PropTypes.object,
-  ]),
-  films: PropTypes.arrayOf(PropTypes.object),
-  updateFilms: PropTypes.func.isRequired,
-  userFilms: PropTypes.arrayOf(PropTypes.object),
-  updateUserFilms: PropTypes.func.isRequired,
-  nextPage: PropTypes.number,
-  setNextPage: PropTypes.func,
-};
-
-ProtectedRoute.defaultProps = {
-  films: [],
-  userFilms: [],
 };
 
 export default ProtectedRoute;

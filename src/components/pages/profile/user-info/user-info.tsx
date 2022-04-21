@@ -1,12 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
 import { Text, WrapperColumn, ButtonWithBorderRadius } from 'atoms/atoms.styled';
 import FormInput from 'components/common/form/form-input';
 import FormSelect from 'components/common/form/form-select';
 import Form from 'components/common/form';
+import { IUser } from 'interfaces/user.interface';
 import 'react-tabs/style/react-tabs.css';
 
-const UserInfo = ({ editInfo, afterSubmit }) => {
+interface IProps {
+  editInfo?: boolean;
+}
+
+const UserInfo = ({ editInfo }: IProps) => {
   const genders = [
     'Male', 'Female', 'Prefer not to tell',
   ];
@@ -15,26 +19,23 @@ const UserInfo = ({ editInfo, afterSubmit }) => {
     'Action', 'Adventure', 'Comedy', 'Drama', 'Historical', 'Horror', 'Science fiction', 'War films', 'Westerns',
   ];
 
-  const [editUserInfo, setEditUserInfo] = useState(editInfo);
-  const [userInfo, setUserInfo] = useState({});
+  const [editUserInfo, setEditUserInfo] = useState<boolean>(editInfo!);
+  const [userInfo, setUserInfo] = useState<IUser>();
 
-  useEffect(() => {
-    setUserInfo(JSON.parse(localStorage.getItem('userInfo')));
-  }, []);
+  useEffect(() => setUserInfo(JSON.parse(localStorage.getItem('userInfo') || '')), []);
 
-  const onSubmit = (form) => {
+  const onSubmit = (form: IUser) => {
     setUserInfo(form);
     localStorage.setItem('userInfo', JSON.stringify(form));
     setEditUserInfo((prev) => !prev);
-    afterSubmit();
   };
 
   return editUserInfo ? (
     <WrapperColumn alignSide="center">
-      <Form submit={onSubmit} formInitialValues={userInfo}>
-        <FormInput name="username" label="Username" placeholder="Example: Your name" />
+      <Form submit={onSubmit} formInitialValues={userInfo!}>
+        <FormInput name="username" label="Username" placeholder="Example: Your name" type="string" />
         <FormInput name="email" label="Email" type="email" placeholder="example@email.com" />
-        <FormInput name="birthday" label="Birthday" type="date" />
+        <FormInput name="birthday" label="Birthday" type="date" placeholder="00.00.0000" />
         <FormSelect name="gender" label="Gender" options={genders} />
         <FormSelect name="genre" label="Favorite genre" options={genres} />
         <FormInput
@@ -48,12 +49,12 @@ const UserInfo = ({ editInfo, afterSubmit }) => {
   )
     : (
       <WrapperColumn alignSide="left">
-        {userInfo.username ? <Text>Username: {userInfo.username}</Text> : null}
-        {userInfo.email ? <Text>Email: {userInfo.email}</Text> : null}
-        {userInfo.birthday ? <Text>Birthday: {userInfo.birthday}</Text> : null}
-        {userInfo.gender ? <Text>Gender: {userInfo.gender}</Text> : null}
-        {userInfo.genre ? <Text>Favorite genre: {userInfo.genre}</Text> : null}
-        {userInfo.filmsAmount ? <Text>How many films you want to watch in month: {userInfo.filmsAmount}</Text> : null}
+        {userInfo?.username ? <Text>Username: {userInfo.username}</Text> : null}
+        {userInfo?.email ? <Text>Email: {userInfo.email}</Text> : null}
+        {userInfo?.birthday ? <Text>Birthday: {userInfo.birthday}</Text> : null}
+        {userInfo?.gender ? <Text>Gender: {userInfo.gender}</Text> : null}
+        {userInfo?.genre ? <Text>Favorite genre: {userInfo.genre}</Text> : null}
+        {userInfo?.filmsAmount ? <Text>How many films you want to watch in month: {userInfo.filmsAmount}</Text> : null}
         <WrapperColumn alignSide="center">
           <ButtonWithBorderRadius onClick={() => {
             setEditUserInfo((prev) => !prev);
@@ -64,16 +65,6 @@ const UserInfo = ({ editInfo, afterSubmit }) => {
         </WrapperColumn>
       </WrapperColumn>
     );
-};
-
-UserInfo.propTypes = {
-  editInfo: PropTypes.bool,
-  afterSubmit: PropTypes.func,
-};
-
-UserInfo.defaultProps = {
-  editInfo: false,
-  afterSubmit: () => {},
 };
 
 export default UserInfo;

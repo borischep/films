@@ -1,12 +1,21 @@
 import React, { useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroller';
-import PropTypes from 'prop-types';
 import { WrapperColumn, WrapperRowWrap } from 'atoms/atoms.styled';
 import FilmsListItem from 'components/common/films-list-item';
 import ErrorMessage from 'components/common/error-message';
+import { IFilm } from 'interfaces/film.interface';
 
-const Films = ({
-  films, onUpdateFilms, userFilms, onUpdateUserFilms, nextPage, setNextPage,
+interface IProps {
+  userFilms: IFilm[];
+  films: IFilm[];
+  nextPage: number;
+  onUpdateFilms: (f: IFilm[]) => void;
+  onUpdateUserFilms: (f: IFilm) => void;
+  setNextPage: (e: number) => void;
+}
+
+const Films: React.FC<IProps> = ({
+  films = [], userFilms, nextPage, onUpdateUserFilms, onUpdateFilms, setNextPage,
 }) => {
   const [error, setError] = useState(false);
 
@@ -20,8 +29,8 @@ const Films = ({
         throw new Error('Something went wrong');
       })
       .then((res) => {
-        onUpdateFilms([...films.filter((item) => (!res.results.find((film) => film.id === item.id))),
-          ...res.results.map((item) => {
+        onUpdateFilms([...films.filter((item) => (!res.results.find((film: IFilm) => film.id === item.id))),
+          ...res.results.map((item: IFilm) => {
             const filmMarks = userFilms.find((film) => film.id === item.id);
             item.liked = filmMarks ? filmMarks.liked : false;
             item.watched = filmMarks ? filmMarks.watched : false;
@@ -63,20 +72,6 @@ const Films = ({
       {filmsList}
     </WrapperColumn>
   );
-};
-
-Films.propTypes = {
-  films: PropTypes.arrayOf(PropTypes.object),
-  onUpdateFilms: PropTypes.func.isRequired,
-  userFilms: PropTypes.arrayOf(PropTypes.object),
-  onUpdateUserFilms: PropTypes.func.isRequired,
-  nextPage: PropTypes.number.isRequired,
-  setNextPage: PropTypes.func.isRequired,
-};
-
-Films.defaultProps = {
-  films: [],
-  userFilms: [],
 };
 
 export default Films;

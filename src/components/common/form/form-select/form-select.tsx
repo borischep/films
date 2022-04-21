@@ -2,10 +2,17 @@ import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import { WrapperColumn, Select } from 'atoms/atoms.styled';
 import { FormContext } from '../form';
+import { IUser } from 'interfaces/user.interface';
+
+interface IProps {
+  label: string;
+  name: keyof IUser;
+  options: string[];
+}
 
 const FormSelect = ({
   label, name, options,
-}) => {
+}: IProps) => {
   const formContext = useContext(FormContext);
   const { form, handleFormChange } = formContext;
 

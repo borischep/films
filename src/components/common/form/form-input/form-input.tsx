@@ -1,11 +1,18 @@
 import React, { useContext } from 'react';
-import PropTypes from 'prop-types';
 import { WrapperColumn, Input } from 'atoms/atoms.styled';
 import { FormContext } from '../form';
+import { IUser } from 'interfaces/user.interface';
+
+interface IProps {
+  label: string;
+  type: string;
+  name: keyof IUser;
+  placeholder: string;
+}
 
 const FormInput = ({
   label, type, name, placeholder,
-}) => {
+}: IProps) => {
   const formContext = useContext(FormContext);
   const { form, handleFormChange } = formContext;
 
@@ -26,18 +33,6 @@ const FormInput = ({
       />
     </WrapperColumn>
   );
-};
-
-FormInput.propTypes = {
-  name: PropTypes.string.isRequired,
-  label: PropTypes.string.isRequired,
-  type: PropTypes.string,
-  placeholder: PropTypes.string,
-};
-
-FormInput.defaultProps = {
-  type: 'text',
-  placeholder: '',
 };
 
 export default FormInput;

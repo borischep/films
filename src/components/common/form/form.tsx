@@ -1,17 +1,30 @@
 import React, { useState } from 'react';
-import PropTypes from 'prop-types';
+import { IUser } from 'interfaces/user.interface';
 import { ButtonWithBorderRadius, WrapperColumn } from 'atoms/atoms.styled';
 
-export const FormContext = React.createContext({
+interface IProps {
+  children:
+  | React.ReactChild
+  | React.ReactChild[];
+  formInitialValues: IUser;
+  submit: (f: IUser) => void;
+}
+
+interface IContext {
+  form: IUser | Record<string, never>;
+  handleFormChange: (e: React.FormEvent<HTMLInputElement>) => void;
+}
+
+export const FormContext = React.createContext<IContext>({
   form: {},
   handleFormChange: () => {},
 });
 
-const Form = ({ children, formInitialValues, submit }) => {
-  const [form, setForm] = useState(formInitialValues);
+const Form = ({ children, formInitialValues, submit }: IProps) => {
+  const [form, setForm] = useState<IUser>(formInitialValues);
 
-  const handleFormChange = (event) => {
-    const { name, value } = event.target;
+  const handleFormChange = (event: React.FormEvent<HTMLInputElement>) => {
+    const { name, value } = event.currentTarget;
     const updatedForm = {
       ...form,
       [name]: value,
@@ -19,7 +32,7 @@ const Form = ({ children, formInitialValues, submit }) => {
     setForm(updatedForm);
   };
 
-  const submitForm = (e) => e.preventDefault();
+  const submitForm = (e: React.FormEvent) => e.preventDefault();
 
   return (
     <form onSubmit={submitForm}>
@@ -40,19 +53,6 @@ const Form = ({ children, formInitialValues, submit }) => {
       </WrapperColumn>
     </form>
   );
-};
-
-Form.propTypes = {
-  children: PropTypes.arrayOf(PropTypes.object).isRequired,
-  formInitialValues: PropTypes.objectOf(PropTypes.oneOfType([
-    PropTypes.string, PropTypes.number, PropTypes.object,
-  ])),
-  submit: PropTypes.func,
-};
-
-Form.defaultProps = {
-  formInitialValues: {},
-  submit: () => {},
 };
 
 export default Form;

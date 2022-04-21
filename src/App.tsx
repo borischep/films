@@ -9,43 +9,43 @@ import { LightTheme, DarkTheme } from 'theme.styled';
 import Login from 'components/pages/login';
 import ProtectedRoute from 'components/routes/protected-route';
 import FilmPage from 'components/pages/film-page';
+import Films from 'components/pages/films';
 import 'global.css';
 import Header from 'components/common/header';
 import Profile from 'components/pages/profile';
-
-const Films = React.lazy(() => import('components/pages/films'));
+import { IFilm } from 'interfaces/film.interface';
 
 const App = () => {
   const [darkTheme, setDarkTheme] = useState(false);
-  const [films, setFilms] = useState([]);
-  const [userFilms, setUserFilms] = useState([]);
-  const [nextPage, setNextPage] = useState(1);
-  const [isLogged, setIsLogged] = useState(false);
+  const [films, setFilms] = useState<IFilm[]>();
+  const [userFilms, setUserFilms] = useState<IFilm[]>();
+  const [nextPage, setNextPage] = useState<number>(1);
+  const [isLogged, setIsLogged] = useState<boolean>(false);
 
   useEffect(() => {
-    setUserFilms(JSON.parse(localStorage.getItem('userFilms')) || []);
+    setUserFilms(JSON.parse(localStorage.getItem('userFilms')!) || []);
   }, []);
 
   useEffect(() => {
     localStorage.setItem('userFilms', JSON.stringify(userFilms));
   }, [userFilms]);
 
-  const onDarkThemeOn = (darkThemeIsOn) => {
+  const onDarkThemeOn = (darkThemeIsOn: boolean) => {
     setDarkTheme(darkThemeIsOn);
   };
 
-  const onUpdateUserFilms = (film) => {
+  const onUpdateUserFilms = (film: IFilm) => {
     if (!film.liked && !film.watched && !film.toWatch) {
-      setUserFilms((prev) => [...prev.filter((item) => item.id !== film.id)]);
+      setUserFilms((prev) => prev ? [...prev.filter((item: IFilm) => item.id !== film.id)] : []);
     } else {
-      setUserFilms((prev) => [...prev.filter((item) => item.id !== film.id),
+      setUserFilms((prev) => prev ? [...prev.filter((item: IFilm) => item.id !== film.id),
         {
           id: film.id, liked: film.liked, watched: film.watched, toWatch: film.toWatch,
-        }]);
+        }] : []);
     }
   };
 
-  const onUpdateFilms = (filmsList) => {
+  const onUpdateFilms = (filmsList: IFilm[]) => {
     setFilms(filmsList);
   };
 
@@ -65,14 +65,16 @@ const App = () => {
             <ProtectedRoute
               path="/profile"
               component={Profile}
-              films={films}
+              films={films!}
               updateFilms={onUpdateFilms}
-              userFilms={userFilms}
+              userFilms={userFilms!}
               updateUserFilms={onUpdateUserFilms}
+              nextPage={nextPage}
+              setNextPage={setNextPage}
             />
             <Route
               path="/films/:id"
-              render={(props) => (
+              render={(props: any) => (
                 <FilmPage
                   films={films}
                   userFilms={userFilms}
@@ -86,9 +88,9 @@ const App = () => {
               <ProtectedRoute
                 path="/films"
                 component={Films}
-                films={films}
+                films={films!}
                 updateFilms={onUpdateFilms}
-                userFilms={userFilms}
+                userFilms={userFilms!}
                 updateUserFilms={onUpdateUserFilms}
                 nextPage={nextPage}
                 setNextPage={setNextPage}
