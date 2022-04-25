@@ -17,8 +17,8 @@ import { IFilm } from 'interfaces/film.interface';
 
 const App = () => {
   const [darkTheme, setDarkTheme] = useState(false);
-  const [films, setFilms] = useState<IFilm[]>();
-  const [userFilms, setUserFilms] = useState<IFilm[]>();
+  const [films, setFilms] = useState<IFilm[]>([]);
+  const [userFilms, setUserFilms] = useState<IFilm[]>([]);
   const [nextPage, setNextPage] = useState<number>(1);
   const [isLogged, setIsLogged] = useState<boolean>(false);
 
@@ -40,7 +40,7 @@ const App = () => {
     } else {
       setUserFilms((prev) => prev ? [...prev.filter((item: IFilm) => item.id !== film.id),
         {
-          id: film.id, liked: film.liked, watched: film.watched, toWatch: film.toWatch,
+          id: film.id, title: film.title, liked: film.liked, watched: film.watched, toWatch: film.toWatch,
         }] : []);
     }
   };
@@ -65,16 +65,16 @@ const App = () => {
             <ProtectedRoute
               path="/profile"
               component={Profile}
-              films={films!}
+              films={films}
               updateFilms={onUpdateFilms}
-              userFilms={userFilms!}
+              userFilms={userFilms}
               updateUserFilms={onUpdateUserFilms}
               nextPage={nextPage}
               setNextPage={setNextPage}
             />
             <Route
               path="/films/:id"
-              render={(props: any) => (
+              render={(props) => (
                 <FilmPage
                   films={films}
                   userFilms={userFilms}
@@ -88,9 +88,9 @@ const App = () => {
               <ProtectedRoute
                 path="/films"
                 component={Films}
-                films={films!}
+                films={films}
                 updateFilms={onUpdateFilms}
-                userFilms={userFilms!}
+                userFilms={userFilms}
                 updateUserFilms={onUpdateUserFilms}
                 nextPage={nextPage}
                 setNextPage={setNextPage}

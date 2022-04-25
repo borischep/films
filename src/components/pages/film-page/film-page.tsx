@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { match } from 'react-router-dom';
 import { WrapperColumn } from 'atoms/atoms.styled';
 import FilmPoster from 'components/common/film-poster';
 import ErrorMessage from 'components/common/error-message';
@@ -7,12 +8,14 @@ import {
 } from './film-page.styled';
 import { IFilm } from 'interfaces/film.interface';
 
+type TParams =  { id: string };
+
 interface IProps {
   userFilms: IFilm[];
   films: IFilm[];
   onUpdateFilms: (f: any) => void;
   onUpdateUserFilms: (f: IFilm) => void;
-  match: any;
+  match: match<TParams>;
 }
 
 const FilmPage = ({
@@ -28,7 +31,7 @@ const FilmPage = ({
         .then((res) => res.json())
         .then((res) => {
           onUpdateFilms(() => {
-            const filmMarks = userFilms.find((film) => film.id === id);
+            const filmMarks = userFilms.find((film) => film.id === +id);
             return [...films, {
               ...res,
               liked: filmMarks ? filmMarks.liked : false,
