@@ -27,7 +27,11 @@ const Login = ({ setIsLogged }: IProps) => {
   return (
     <WrapperColumn alignSide="center">
       <Text>Username</Text>
-      <Input name="user" value={username} onChange={(i: any) => setUsername(i.target.value)} />
+      <Input 
+        name="user"
+        value={username}
+        onChange={(i: React.ChangeEvent<HTMLInputElement>) => setUsername(i.target.value)}
+      />
       <Link to="/films">
         <ButtonWithBorderRadius
           withMargin="10px"
