@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import PropTypes from 'prop-types';
 import { useHistory, Link } from 'react-router-dom';
 import {
   WrapperColumn, Text, Input, ButtonWithBorderRadius,
 } from 'atoms/atoms.styled';
 
-const Login = ({ setIsLogged }) => {
+interface IProps {
+  setIsLogged: (e: boolean) => void;
+}
+
+const Login = ({ setIsLogged }: IProps) => {
   const [username, setUsername] = useState('');
   const history = useHistory();
 
@@ -24,14 +27,18 @@ const Login = ({ setIsLogged }) => {
   return (
     <WrapperColumn alignSide="center">
       <Text>Username</Text>
-      <Input name="user" value={username} onChange={(i) => setUsername(i.target.value)} />
+      <Input 
+        name="user"
+        value={username}
+        onChange={(i: React.ChangeEvent<HTMLInputElement>) => setUsername(i.target.value)}
+      />
       <Link to="/films">
         <ButtonWithBorderRadius
           withMargin="10px"
           onClick={() => {
             if (username) {
               localStorage.setItem('userInfo', JSON.stringify({ username, ...userInfoInitialState }));
-              localStorage.setItem('isAuthenticated', true);
+              localStorage.setItem('isAuthenticated', 'true');
               setIsLogged(true);
             } else {
               alert('Input cannot be empty');
@@ -43,10 +50,6 @@ const Login = ({ setIsLogged }) => {
       </Link>
     </WrapperColumn>
   );
-};
-
-Login.propTypes = {
-  setIsLogged: PropTypes.func.isRequired,
 };
 
 export default Login;

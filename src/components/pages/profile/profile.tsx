@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react';
-import PropTypes from 'prop-types';
 import {
   Tab, Tabs, TabList, TabPanel,
 } from 'react-tabs';
@@ -9,17 +8,25 @@ import {
 import FilmsListItem from 'components/common/films-list-item';
 import UserInfo from './user-info';
 import 'react-tabs/style/react-tabs.css';
+import { IFilm } from 'interfaces/film.interface';
 
-const Profile = ({
-  films, onUpdateFilms, userFilms, onUpdateUserFilms,
+interface IProps {
+  userFilms: IFilm[];
+  films: IFilm[];
+  onUpdateFilms: (f: any) => void;
+  onUpdateUserFilms: (f: IFilm) => void;
+}
+
+const Profile: React.FC<IProps> = ({
+  films = [], onUpdateFilms, userFilms = [], onUpdateUserFilms,
 }) => {
   useEffect(() => {
     userFilms.forEach((userFilm) => {
       if (!films.find((film) => film.id === userFilm.id)) {
         fetch(`https://api.themoviedb.org/3/movie/${userFilm.id}?api_key=${process.env.REACT_APP_API_KEY}`)
           .then((res) => res.json())
-          .then((res) => {
-            onUpdateFilms((prev) => [...prev, {
+          .then((res: IFilm) => {
+            onUpdateFilms((prev: IFilm[]) => [...prev, {
               ...res,
               liked: userFilm.liked,
               watched: userFilm.watched,
@@ -31,6 +38,7 @@ const Profile = ({
   }, [userFilms]);
 
   return (
+    // eslint-disable-next-line react/jsx-filename-extension
     <WrapperColumn alignSide="center">
       <UserInfo />
       <Tabs>
@@ -88,18 +96,6 @@ const Profile = ({
       </Tabs>
     </WrapperColumn>
   );
-};
-
-Profile.propTypes = {
-  films: PropTypes.arrayOf(PropTypes.object),
-  onUpdateFilms: PropTypes.func.isRequired,
-  userFilms: PropTypes.arrayOf(PropTypes.object),
-  onUpdateUserFilms: PropTypes.func.isRequired,
-};
-
-Profile.defaultProps = {
-  films: [],
-  userFilms: [],
 };
 
 export default Profile;

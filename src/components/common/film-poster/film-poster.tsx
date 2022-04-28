@@ -1,13 +1,20 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { ReactComponent as LikedIcon } from 'assets/liked.svg';
 import { ReactComponent as WatchIcon } from 'assets/watch.svg';
 import { ReactComponent as WatchedIcon } from 'assets/watched.svg';
 import { FilmPosterWrapper, FilmPosterImg } from './film-poster.styled';
+import { IFilm } from 'interfaces/film.interface';
+
+interface IProps {
+  filmDetails: IFilm;
+  films: IFilm[];
+  onUpdateFilms: (f: IFilm[]) => void;
+  onUpdateUserFilms: (f: IFilm) => void;
+}
 
 const FilmPoster = ({
   filmDetails, films, onUpdateFilms, onUpdateUserFilms,
-}) => {
+}: IProps) => {
   const onLiked = () => {
     onUpdateFilms([...films.map((item) => (item.id !== filmDetails.id
       ? item
@@ -31,33 +38,18 @@ const FilmPoster = ({
 
   return (
     <FilmPosterWrapper>
-      <LikedIcon onClick={onLiked} className={`poster-icon ${filmDetails.liked ? 'active' : 'inactive'}`} alt="img" />
+      <LikedIcon onClick={onLiked} className={`poster-icon ${filmDetails.liked ? 'active' : 'inactive'}`} />
       <WatchIcon
         onClick={onToWatch}
         className={`poster-icon ${filmDetails.toWatch ? 'active' : 'inactive'}`}
-        alt="img"
       />
       <WatchedIcon
         onClick={onWatched}
         className={`poster-icon ${filmDetails.watched ? 'active' : 'inactive'}`}
-        alt="img"
       />
-      <FilmPosterImg className="poster" src={`https://image.tmdb.org/t/p/w500${filmDetails.poster_path}`} alt="img" />
+      <FilmPosterImg className="poster" src={`https://image.tmdb.org/t/p/w500${filmDetails.poster_path}`} />
     </FilmPosterWrapper>
   );
-};
-
-FilmPoster.propTypes = {
-  films: PropTypes.arrayOf(PropTypes.object),
-  filmDetails: PropTypes.objectOf(PropTypes.oneOfType([
-    PropTypes.object, PropTypes.bool, PropTypes.string, PropTypes.number, PropTypes.array,
-  ])).isRequired,
-  onUpdateFilms: PropTypes.func.isRequired,
-  onUpdateUserFilms: PropTypes.func.isRequired,
-};
-
-FilmPoster.defaultProps = {
-  films: [],
 };
 
 export default FilmPoster;

@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import Switch from 'react-switch';
 import {
@@ -7,8 +6,14 @@ import {
 } from 'atoms/atoms.styled';
 import { HeaderWrapper, SwitchWrapper, HeaderText } from './header.styled';
 
-const Header = ({ onDarkThemeOn, setIsLogged, isLogged }) => {
-  const [checked, setChecked] = useState(false);
+interface IProps {
+  onDarkThemeOn: (b: boolean) => void;
+  isLogged: boolean;
+  setIsLogged: (b: boolean) => void;
+}
+
+const Header = ({ onDarkThemeOn, setIsLogged, isLogged }: IProps) => {
+  const [checked, setChecked] = useState<boolean>(false);
 
   const onClickLogout = () => {
     localStorage.removeItem('userInfo');
@@ -21,7 +26,7 @@ const Header = ({ onDarkThemeOn, setIsLogged, isLogged }) => {
     setIsLogged(localStorage.getItem('isAuthenticated') === 'true');
   }, []);
 
-  const onThemeChanged = (value) => {
+  const onThemeChanged = (value: boolean) => {
     setChecked((prev) => !prev);
     onDarkThemeOn(value);
   };
@@ -30,10 +35,8 @@ const Header = ({ onDarkThemeOn, setIsLogged, isLogged }) => {
     <HeaderWrapper>
       <Link to="/films"><HeaderText>Films</HeaderText></Link>
       <WrapperRowWrap>
-        {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
         <SwitchWrapper>
           <Switch
-            label="Dark theme"
             onChange={onThemeChanged}
             checked={checked}
             uncheckedIcon={false}
@@ -56,16 +59,6 @@ const Header = ({ onDarkThemeOn, setIsLogged, isLogged }) => {
       </WrapperRowWrap>
     </HeaderWrapper>
   );
-};
-
-Header.propTypes = {
-  onDarkThemeOn: PropTypes.func.isRequired,
-  isLogged: PropTypes.bool,
-  setIsLogged: PropTypes.func.isRequired,
-};
-
-Header.defaultProps = {
-  isLogged: false,
 };
 
 export default Header;
