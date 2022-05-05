@@ -1,39 +1,56 @@
-import React from 'react';
+import React, { Dispatch } from 'react';
 import { ReactComponent as LikedIcon } from 'assets/liked.svg';
 import { ReactComponent as WatchIcon } from 'assets/watch.svg';
 import { ReactComponent as WatchedIcon } from 'assets/watched.svg';
 import { FilmPosterWrapper, FilmPosterImg } from './film-poster.styled';
 import { IFilm } from 'interfaces/film.interface';
+import { UPDATE_USER_FILM, SET_FILMS } from 'actions/actionTypes';
+import { connect } from 'react-redux';
+import { IRootStore } from 'store';
+import { IUserAction } from 'interfaces/userAction.interface';
 
 interface IProps {
   filmDetails: IFilm;
   films: IFilm[];
-  onUpdateFilms: (f: IFilm[]) => void;
-  onUpdateUserFilms: (f: IFilm) => void;
+  setFilms: (f: IFilm[]) => void;
+  updateUserfilm: (f: IFilm) => void;
 }
 
+const mapStateToProps = (state: IRootStore) => {
+  return {
+    films: state.films,
+  };
+};
+
+const mapDispatchToProps = (dispatch: Dispatch<IUserAction>) => ({
+  updateUserfilm: (payload: IFilm) =>
+    dispatch({ type: UPDATE_USER_FILM, payload }),
+  setFilms: (payload: IFilm[]) =>
+    dispatch({ type: SET_FILMS, payload }),
+});
+
 const FilmPoster = ({
-  filmDetails, films, onUpdateFilms, onUpdateUserFilms,
+  filmDetails, films, setFilms, updateUserfilm,
 }: IProps) => {
   const onLiked = () => {
-    onUpdateFilms([...films.map((item) => (item.id !== filmDetails.id
+    setFilms([...films.map((item) => (item.id !== filmDetails.id
       ? item
       : { ...item, liked: !item.liked }))]);
-    onUpdateUserFilms({ ...filmDetails, liked: !filmDetails.liked });
+    updateUserfilm({ ...filmDetails, liked: !filmDetails.liked });
   };
 
   const onWatched = () => {
-    onUpdateFilms([...films.map((item) => (item.id !== filmDetails.id
+    setFilms([...films.map((item) => (item.id !== filmDetails.id
       ? item
       : { ...item, watched: !item.watched }))]);
-    onUpdateUserFilms({ ...filmDetails, watched: !filmDetails.watched });
+    updateUserfilm({ ...filmDetails, watched: !filmDetails.watched });
   };
 
   const onToWatch = () => {
-    onUpdateFilms([...films.map((item) => (item.id !== filmDetails.id
+    setFilms([...films.map((item) => (item.id !== filmDetails.id
       ? item
       : { ...item, toWatch: !item.toWatch }))]);
-    onUpdateUserFilms({ ...filmDetails, toWatch: !filmDetails.toWatch });
+    updateUserfilm({ ...filmDetails, toWatch: !filmDetails.toWatch });
   };
 
   return (
@@ -52,4 +69,4 @@ const FilmPoster = ({
   );
 };
 
-export default FilmPoster;
+export default connect(mapStateToProps, mapDispatchToProps)(FilmPoster);

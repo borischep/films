@@ -1,14 +1,26 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Dispatch } from 'react';
 import { useHistory, Link } from 'react-router-dom';
 import {
   WrapperColumn, Text, Input, ButtonWithBorderRadius,
 } from 'atoms/atoms.styled';
+import { SET_USER, SET_IS_LOGGED } from 'actions/actionTypes';
+import { connect } from 'react-redux';
+import { IUserAction } from 'interfaces/userAction.interface';
+import { IUser } from 'interfaces/user.interface';
 
 interface IProps {
   setIsLogged: (e: boolean) => void;
+  setUser: (f: IUser) => void;
 }
 
-const Login = ({ setIsLogged }: IProps) => {
+const mapDispatchToProps = (dispatch: Dispatch<IUserAction>) => ({
+  setUser: (payload: IUser) => 
+    dispatch({ type: SET_USER, payload }),
+  setIsLogged: (payload: boolean) =>
+    dispatch({ type: SET_IS_LOGGED, payload }),
+});
+
+const Login = ({ setIsLogged, setUser }: IProps) => {
   const [username, setUsername] = useState('');
   const history = useHistory();
 
@@ -30,7 +42,7 @@ const Login = ({ setIsLogged }: IProps) => {
       <Input 
         name="user"
         value={username}
-        onChange={(i: React.ChangeEvent<HTMLInputElement>) => setUsername(i.target.value)}
+        onChange={(({ target }: React.ChangeEvent<HTMLInputElement>) => setUsername(target.value))}
       />
       <Link to="/films">
         <ButtonWithBorderRadius
@@ -39,6 +51,7 @@ const Login = ({ setIsLogged }: IProps) => {
             if (username) {
               localStorage.setItem('userInfo', JSON.stringify({ username, ...userInfoInitialState }));
               localStorage.setItem('isAuthenticated', 'true');
+              setUser({ username });
               setIsLogged(true);
             } else {
               alert('Input cannot be empty');
@@ -52,4 +65,4 @@ const Login = ({ setIsLogged }: IProps) => {
   );
 };
 
-export default Login;
+export default connect(null, mapDispatchToProps)(Login);

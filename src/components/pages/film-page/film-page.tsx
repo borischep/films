@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, Dispatch } from 'react';
 import { match } from 'react-router-dom';
 import { WrapperColumn } from 'atoms/atoms.styled';
 import FilmPoster from 'components/common/film-poster';
@@ -7,19 +7,34 @@ import {
   FilmTitle, FilmDescription, FilmInfo,
 } from './film-page.styled';
 import { IFilm } from 'interfaces/film.interface';
+import { ADD_FILMS } from 'actions/actionTypes';
+import { connect } from 'react-redux';
+import { IRootStore } from 'store';
+import { IUserAction } from 'interfaces/userAction.interface';
 
 type TParams =  { id: string };
 
 interface IProps {
   userFilms: IFilm[];
   films: IFilm[];
-  onUpdateFilms: (f: any) => void;
-  onUpdateUserFilms: (f: IFilm) => void;
   match: match<TParams>;
+  addFilms: (f: IFilm[]) => void;
 }
 
+const mapStateToProps = (state: IRootStore) => {
+  return {
+    userFilms: state.userFilms,
+    films: state.films,
+  };
+};
+
+const mapDispatchToProps = (dispatch: Dispatch<IUserAction>) => ({
+  addFilms: (payload: IFilm[]) =>
+    dispatch({ type: ADD_FILMS, payload }),
+});
+
 const FilmPage = ({
-  match: { params: { id } }, films, onUpdateFilms, userFilms, onUpdateUserFilms,
+  match: { params: { id } }, films, userFilms, addFilms,
 }: IProps) => {
   const [filmDetails, setFilmDetails] = useState<IFilm>();
 
@@ -30,15 +45,13 @@ const FilmPage = ({
       : fetch(`https://api.themoviedb.org/3/movie/${id}?api_key=${process.env.REACT_APP_API_KEY}`)
         .then((res) => res.json())
         .then((res) => {
-          onUpdateFilms(() => {
-            const filmMarks = userFilms.find((film) => film.id === +id);
-            return [...films, {
-              ...res,
-              liked: filmMarks ? filmMarks.liked : false,
-              watched: filmMarks ? filmMarks.watched : false,
-              toWatch: filmMarks ? filmMarks.toWatch : false,
-            }];
-          });
+          const filmMarks = userFilms.find((film) => film.id === +id);
+          addFilms([{
+            ...res,
+            liked: filmMarks ? filmMarks.liked : false,
+            watched: filmMarks ? filmMarks.watched : false,
+            toWatch: filmMarks ? filmMarks.toWatch : false,
+          }]);
         });
   }, [films, filmDetails]);
 
@@ -47,10 +60,7 @@ const FilmPage = ({
       <FilmTitle>{filmDetails.title}</FilmTitle>
       <FilmInfo>
         <FilmPoster
-          onUpdateFilms={onUpdateFilms}
           filmDetails={filmDetails}
-          films={films}
-          onUpdateUserFilms={onUpdateUserFilms}
         />
         <FilmDescription>{filmDetails.overview}</FilmDescription>
       </FilmInfo>
@@ -62,4 +72,4 @@ const FilmPage = ({
   );
 };
 
-export default FilmPage;
+export default connect(mapStateToProps, mapDispatchToProps)(FilmPage);

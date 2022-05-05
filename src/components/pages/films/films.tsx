@@ -1,26 +1,41 @@
-import React, { useState } from 'react';
+import React, { useState, Dispatch } from 'react';
 import InfiniteScroll from 'react-infinite-scroller';
 import { WrapperColumn, WrapperRowWrap } from 'atoms/atoms.styled';
 import FilmsListItem from 'components/common/films-list-item';
 import ErrorMessage from 'components/common/error-message';
 import { IFilm } from 'interfaces/film.interface';
+import { ADD_FILMS, SET_NEXT_PAGE } from 'actions/actionTypes';
+import { connect } from 'react-redux';
+import { IRootStore } from 'store';
+import { IUserAction } from 'interfaces/userAction.interface';
 
 interface IProps {
-  userFilms: IFilm[];
   films: IFilm[];
-  nextPage: number;
-  onUpdateFilms: (f: IFilm[]) => void;
-  onUpdateUserFilms: (f: IFilm) => void;
-  setNextPage: (e: number) => void;
+  page: number;
+  addFilms: (f: IFilm[]) => void;
+  setNextPage: () => void;
 }
 
-const Films: React.FC<IProps> = ({
-  films = [], userFilms, nextPage, onUpdateUserFilms, onUpdateFilms, setNextPage,
-}) => {
-  const [error, setError] = useState(false);
+const mapStateToProps = (state: IRootStore) => {
+  return {
+    page: state.page,
+    films: state.films,
+  };
+};
 
+const mapDispatchToProps = (dispatch: Dispatch<IUserAction>) => ({
+  addFilms: (payload: IFilm[]) =>
+    dispatch({ type: ADD_FILMS, payload }),
+  setNextPage: () =>
+    dispatch({ type: SET_NEXT_PAGE }),
+});
+
+const Films = ({
+  films, page, addFilms, setNextPage,
+}: IProps) => {
+  const [error, setError] = useState(false);
   const fetchData = () => {
-    fetch(`https://api.themoviedb.org/3/movie/popular/?api_key=${process.env.REACT_APP_API_KEY}&page=${nextPage}`)
+    fetch(`https://api.themoviedb.org/3/movie/popular/?api_key=${process.env.REACT_APP_API_KEY}&page=${page + 1}`)
       .then((res) => {
         if (res.ok) {
           return res.json();
@@ -29,15 +44,8 @@ const Films: React.FC<IProps> = ({
         throw new Error('Something went wrong');
       })
       .then((res) => {
-        onUpdateFilms([...films.filter((item) => (!res.results.find((film: IFilm) => film.id === item.id))),
-          ...res.results.map((item: IFilm) => {
-            const filmMarks = userFilms.find((film) => film.id === item.id);
-            item.liked = filmMarks ? filmMarks.liked : false;
-            item.watched = filmMarks ? filmMarks.watched : false;
-            item.toWatch = filmMarks ? filmMarks.toWatch : false;
-            return item;
-          })]);
-        setNextPage(nextPage + 1);
+        addFilms(res.results);
+        setNextPage();
       })
       .catch(() => {
         setError(true);
@@ -48,19 +56,16 @@ const Films: React.FC<IProps> = ({
     ? <ErrorMessage />
     : (
       <InfiniteScroll
-        pageStart={nextPage}
+        pageStart={page}
         loadMore={fetchData}
-        hasMore={nextPage < 10}
+        hasMore={page < 10}
         loader={<h4 key="loader">Loading...</h4>}
       >
         <WrapperRowWrap>
           {films.map((film) => (
             <FilmsListItem
-              key={film.id + nextPage}
-              onUpdateFilms={onUpdateFilms}
+              key={film.id + page}
               filmDetails={film}
-              films={films}
-              onUpdateUserFilms={onUpdateUserFilms}
             />
           ))}
         </WrapperRowWrap>
@@ -74,4 +79,4 @@ const Films: React.FC<IProps> = ({
   );
 };
 
-export default Films;
+export default connect(mapStateToProps, mapDispatchToProps)(Films);

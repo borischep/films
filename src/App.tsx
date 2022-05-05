@@ -1,4 +1,4 @@
-import React, { Suspense, useState, useEffect } from 'react';
+import React, { Suspense, useEffect, Dispatch } from 'react';
 import {
   BrowserRouter as Router,
   Switch,
@@ -14,14 +14,30 @@ import 'global.css';
 import Header from 'components/common/header';
 import Profile from 'components/pages/profile';
 import { IFilm } from 'interfaces/film.interface';
+import { IRootStore } from 'store';
+import { SET_USER_FILMS, SET_FILMS } from 'actions/actionTypes';
+import { connect, ConnectedProps } from 'react-redux';
+import { IUserAction } from 'interfaces/userAction.interface';
 
-const App = () => {
-  const [darkTheme, setDarkTheme] = useState(false);
-  const [films, setFilms] = useState<IFilm[]>([]);
-  const [userFilms, setUserFilms] = useState<IFilm[]>([]);
-  const [nextPage, setNextPage] = useState<number>(1);
-  const [isLogged, setIsLogged] = useState<boolean>(false);
+const mapStateToProps = (state: IRootStore) => {
+  return {
+    userFilms: state.userFilms,
+    darkTheme: state.darkTheme,
+  };
+};
 
+const mapDispatchToProps = (dispatch: Dispatch<IUserAction>) => ({
+  setUserFilms: (payload: IFilm[]) =>
+    dispatch({ type: SET_USER_FILMS, payload }),
+  setFilms: (payload: IFilm[]) =>
+    dispatch({ type: SET_FILMS, payload }),
+});
+
+const connector = connect(mapStateToProps, mapDispatchToProps);
+
+export type ComponentProps = ConnectedProps<typeof connector>;
+
+const App = ({ userFilms, darkTheme, setUserFilms }: ComponentProps) => {
   useEffect(() => {
     setUserFilms(JSON.parse(localStorage.getItem('userFilms')!) || []);
   }, []);
@@ -30,56 +46,27 @@ const App = () => {
     localStorage.setItem('userFilms', JSON.stringify(userFilms));
   }, [userFilms]);
 
-  const onDarkThemeOn = (darkThemeIsOn: boolean) => {
-    setDarkTheme(darkThemeIsOn);
-  };
-
-  const onUpdateUserFilms = (film: IFilm) => {
-    if (!film.liked && !film.watched && !film.toWatch) {
-      setUserFilms((prev) => prev ? [...prev.filter((item: IFilm) => item.id !== film.id)] : []);
-    } else {
-      setUserFilms((prev) => prev ? [...prev.filter((item: IFilm) => item.id !== film.id),
-        {
-          id: film.id, title: film.title, liked: film.liked, watched: film.watched, toWatch: film.toWatch,
-        }] : []);
-    }
-  };
-
-  const onUpdateFilms = (filmsList: IFilm[]) => {
-    setFilms(filmsList);
-  };
-
   return (
     <div className={darkTheme ? 'dark' : ''}>
       <ThemeProvider theme={darkTheme ? DarkTheme : LightTheme}>
         <Router>
-          <Header isLogged={isLogged} setIsLogged={setIsLogged} onDarkThemeOn={onDarkThemeOn} />
+          <Header />
           <Switch>
             <Route
               path="/"
               exact
               render={() => (
-                <Login setIsLogged={setIsLogged} />
+                <Login />
               )}
             />
             <ProtectedRoute
               path="/profile"
               component={Profile}
-              films={films}
-              updateFilms={onUpdateFilms}
-              userFilms={userFilms}
-              updateUserFilms={onUpdateUserFilms}
-              nextPage={nextPage}
-              setNextPage={setNextPage}
             />
             <Route
               path="/films/:id"
               render={(props) => (
                 <FilmPage
-                  films={films}
-                  userFilms={userFilms}
-                  onUpdateUserFilms={onUpdateUserFilms}
-                  onUpdateFilms={onUpdateFilms}
                   {...props}
                 />
               )}
@@ -88,12 +75,6 @@ const App = () => {
               <ProtectedRoute
                 path="/films"
                 component={Films}
-                films={films}
-                updateFilms={onUpdateFilms}
-                userFilms={userFilms}
-                updateUserFilms={onUpdateUserFilms}
-                nextPage={nextPage}
-                setNextPage={setNextPage}
               />
             </Suspense>
           </Switch>
@@ -103,4 +84,4 @@ const App = () => {
   );
 };
 
-export default App;
+export default connector(App);

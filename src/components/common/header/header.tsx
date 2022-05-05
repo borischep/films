@@ -1,24 +1,45 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Dispatch } from 'react';
 import { Link } from 'react-router-dom';
 import Switch from 'react-switch';
 import {
   ButtonWithBorderRadius, WrapperRowWrap,
 } from 'atoms/atoms.styled';
 import { HeaderWrapper, SwitchWrapper, HeaderText } from './header.styled';
+import { SET_IS_LOGGED, SET_DARK_THEME, CLEAR_USER_STORE } from 'actions/actionTypes';
+import { connect } from 'react-redux';
+import { IRootStore } from 'store';
+import { IUserAction } from 'interfaces/userAction.interface';
 
 interface IProps {
-  onDarkThemeOn: (b: boolean) => void;
   isLogged: boolean;
+  setDarkTheme: (b: boolean) => void;
   setIsLogged: (b: boolean) => void;
+  clearUserStore: () => void;
 }
 
-const Header = ({ onDarkThemeOn, setIsLogged, isLogged }: IProps) => {
+const mapStateToProps = (state: IRootStore) => {
+  return {
+    isLogged: state.isLogged,
+  };
+};
+
+const mapDispatchToProps = (dispatch: Dispatch<IUserAction>) => ({
+  setIsLogged: (payload: boolean) =>
+    dispatch({ type: SET_IS_LOGGED, payload }),
+  setDarkTheme: (payload: boolean) =>
+    dispatch({ type: SET_DARK_THEME, payload }),
+  clearUserStore: () =>
+    dispatch({ type: CLEAR_USER_STORE }),
+});
+
+const Header = ({ setDarkTheme, setIsLogged, clearUserStore, isLogged }: IProps) => {
   const [checked, setChecked] = useState<boolean>(false);
 
   const onClickLogout = () => {
     localStorage.removeItem('userInfo');
     localStorage.removeItem('isAuthenticated');
     localStorage.removeItem('userFilms');
+    clearUserStore();
     setIsLogged(false);
   };
 
@@ -28,7 +49,7 @@ const Header = ({ onDarkThemeOn, setIsLogged, isLogged }: IProps) => {
 
   const onThemeChanged = (value: boolean) => {
     setChecked((prev) => !prev);
-    onDarkThemeOn(value);
+    setDarkTheme(value);
   };
 
   return (
@@ -61,4 +82,4 @@ const Header = ({ onDarkThemeOn, setIsLogged, isLogged }: IProps) => {
   );
 };
 
-export default Header;
+export default connect(mapStateToProps, mapDispatchToProps)(Header);

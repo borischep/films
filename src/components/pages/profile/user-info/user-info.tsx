@@ -1,16 +1,33 @@
-import React, { useEffect, useState } from 'react';
+import React, { Dispatch, useEffect, useState } from 'react';
 import { Text, WrapperColumn, ButtonWithBorderRadius } from 'atoms/atoms.styled';
 import FormInput from 'components/common/form/form-input';
 import FormSelect from 'components/common/form/form-select';
 import Form from 'components/common/form';
 import { IUser } from 'interfaces/user.interface';
 import 'react-tabs/style/react-tabs.css';
+import { SET_USER } from 'actions/actionTypes';
+import { connect } from 'react-redux';
+import { IRootStore } from 'store';
+import { IUserAction } from 'interfaces/userAction.interface';
 
 interface IProps {
   editInfo?: boolean;
+  user: IUser;
+  setUserInfo: (u: IUser) => void;
 }
 
-const UserInfo = ({ editInfo }: IProps) => {
+const mapStateToProps = (state: IRootStore) => {
+  return {
+    user: state.user,
+  };
+};
+
+const mapDispatchToProps = (dispatch: Dispatch<IUserAction>) => ({
+  setUserInfo: (payload: IUser) =>
+    dispatch({ type: SET_USER, payload }),
+});
+
+const UserInfo = ({ editInfo = false, user, setUserInfo }: IProps) => {
   const genders = [
     'Male', 'Female', 'Prefer not to tell',
   ];
@@ -19,8 +36,7 @@ const UserInfo = ({ editInfo }: IProps) => {
     'Action', 'Adventure', 'Comedy', 'Drama', 'Historical', 'Horror', 'Science fiction', 'War films', 'Westerns',
   ];
 
-  const [editUserInfo, setEditUserInfo] = useState<boolean>(editInfo!);
-  const [userInfo, setUserInfo] = useState<IUser>();
+  const [editUserInfo, setEditUserInfo] = useState<boolean>(editInfo);
 
   useEffect(() => setUserInfo(JSON.parse(localStorage.getItem('userInfo') || '')), []);
 
@@ -32,7 +48,7 @@ const UserInfo = ({ editInfo }: IProps) => {
 
   return editUserInfo ? (
     <WrapperColumn alignSide="center">
-      <Form submit={onSubmit} formInitialValues={userInfo!}>
+      <Form submit={onSubmit} formInitialValues={user}>
         <FormInput name="username" label="Username" placeholder="Example: Your name" type="string" />
         <FormInput name="email" label="Email" type="email" placeholder="example@email.com" />
         <FormInput name="birthday" label="Birthday" type="date" placeholder="00.00.0000" />
@@ -49,12 +65,12 @@ const UserInfo = ({ editInfo }: IProps) => {
   )
     : (
       <WrapperColumn alignSide="left">
-        {userInfo?.username ? <Text>Username: {userInfo.username}</Text> : null}
-        {userInfo?.email ? <Text>Email: {userInfo.email}</Text> : null}
-        {userInfo?.birthday ? <Text>Birthday: {userInfo.birthday}</Text> : null}
-        {userInfo?.gender ? <Text>Gender: {userInfo.gender}</Text> : null}
-        {userInfo?.genre ? <Text>Favorite genre: {userInfo.genre}</Text> : null}
-        {userInfo?.filmsAmount ? <Text>How many films you want to watch in month: {userInfo.filmsAmount}</Text> : null}
+        {user?.username ? <Text>Username: {user.username}</Text> : null}
+        {user?.email ? <Text>Email: {user.email}</Text> : null}
+        {user?.birthday ? <Text>Birthday: {user.birthday}</Text> : null}
+        {user?.gender ? <Text>Gender: {user.gender}</Text> : null}
+        {user?.genre ? <Text>Favorite genre: {user.genre}</Text> : null}
+        {user?.filmsAmount ? <Text>How many films you want to watch in month: {user.filmsAmount}</Text> : null}
         <WrapperColumn alignSide="center">
           <ButtonWithBorderRadius onClick={() => {
             setEditUserInfo((prev) => !prev);
@@ -67,4 +83,4 @@ const UserInfo = ({ editInfo }: IProps) => {
     );
 };
 
-export default UserInfo;
+export default connect(mapStateToProps, mapDispatchToProps)(UserInfo);
