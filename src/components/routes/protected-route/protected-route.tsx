@@ -1,9 +1,9 @@
 import React from 'react';
-import { Redirect, Route, useLocation } from 'react-router-dom';
+import { Redirect, Route, useLocation, RouteProps } from 'react-router-dom';
 
 interface IProps {
   path: string;
-  component: any,
+  component: RouteProps['component'],
 }
 
 const ProtectedRoute = ({
@@ -11,9 +11,7 @@ const ProtectedRoute = ({
 }: IProps) => {
   const location = useLocation();
   return localStorage.getItem('isAuthenticated') ? (
-    <Route path={path} exact>
-      <Component />
-    </Route>
+    <Route path={path} exact component={Component} />
   ) : (
     <Redirect
       to={{

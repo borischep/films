@@ -6,8 +6,11 @@ import { SET_USER, UPDATE_USER,
   SET_FILMS, ADD_FILMS,
   CLEAR_USER_STORE } from 'actions/actionTypes';
 import { IFilm } from 'interfaces/film.interface';
+import { IRootStore } from 'store';
+import { AnyAction, Reducer } from 'redux';
 
-export const reducer = (state: any, action: any) => {
+export const reducer: Reducer = (state: IRootStore, action: AnyAction) => {
+  console.log(state);
   switch (action.type) {
     case SET_USER: 
       return {
