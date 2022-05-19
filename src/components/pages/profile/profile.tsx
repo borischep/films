@@ -9,24 +9,19 @@ import FilmsListItem from 'components/common/films-list-item';
 import UserInfo from './user-info';
 import 'react-tabs/style/react-tabs.css';
 import { IFilm } from 'interfaces/film.interface';
+import { observer } from 'mobx-react';
+import { useStore } from 'stores/root-store';
 
-interface IProps {
-  userFilms: IFilm[];
-  films: IFilm[];
-  onUpdateFilms: (f: any) => void;
-  onUpdateUserFilms: (f: IFilm) => void;
-}
+const Profile = () => {
+  const { filmStore } = useStore();
 
-const Profile: React.FC<IProps> = ({
-  films = [], onUpdateFilms, userFilms = [], onUpdateUserFilms,
-}) => {
   useEffect(() => {
-    userFilms.forEach((userFilm) => {
-      if (!films.find((film) => film.id === userFilm.id)) {
+    filmStore.userFilms.forEach((userFilm: IFilm) => {
+      if (!filmStore.films.find((film: IFilm) => film.id === userFilm.id)) {
         fetch(`https://api.themoviedb.org/3/movie/${userFilm.id}?api_key=${process.env.REACT_APP_API_KEY}`)
           .then((res) => res.json())
           .then((res: IFilm) => {
-            onUpdateFilms((prev: IFilm[]) => [...prev, {
+            filmStore.addFilms([{
               ...res,
               liked: userFilm.liked,
               watched: userFilm.watched,
@@ -35,10 +30,9 @@ const Profile: React.FC<IProps> = ({
           });
       }
     });
-  }, [userFilms]);
+  }, [filmStore.userFilms]);
 
   return (
-    // eslint-disable-next-line react/jsx-filename-extension
     <WrapperColumn alignSide="center">
       <UserInfo />
       <Tabs>
@@ -50,14 +44,11 @@ const Profile: React.FC<IProps> = ({
 
         <TabPanel>
           <WrapperRowWrap>
-            {films.map((film) => (film.liked
+            {filmStore.films.map((film: IFilm) => (film.liked
               ? (
                 <FilmsListItem
                   key={film.id}
-                  onUpdateFilms={onUpdateFilms}
                   filmDetails={film}
-                  films={films}
-                  onUpdateUserFilms={onUpdateUserFilms}
                 />
               )
               : null))}
@@ -65,14 +56,11 @@ const Profile: React.FC<IProps> = ({
         </TabPanel>
         <TabPanel>
           <WrapperRowWrap>
-            {films.map((film) => (film.watched
+            {filmStore.films.map((film: IFilm) => (film.watched
               ? (
                 <FilmsListItem
                   key={film.id}
-                  onUpdateFilms={onUpdateFilms}
                   filmDetails={film}
-                  films={films}
-                  onUpdateUserFilms={onUpdateUserFilms}
                 />
               )
               : null))}
@@ -80,14 +68,11 @@ const Profile: React.FC<IProps> = ({
         </TabPanel>
         <TabPanel>
           <WrapperRowWrap>
-            {films.map((film) => (film.toWatch
+            {filmStore.films.map((film: IFilm) => (film.toWatch
               ? (
                 <FilmsListItem
                   key={film.id}
-                  onUpdateFilms={onUpdateFilms}
                   filmDetails={film}
-                  films={films}
-                  onUpdateUserFilms={onUpdateUserFilms}
                 />
               )
               : null))}
@@ -98,4 +83,4 @@ const Profile: React.FC<IProps> = ({
   );
 };
 
-export default Profile;
+export default observer(Profile);

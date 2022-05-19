@@ -7,50 +7,44 @@ import {
   FilmTitle, FilmDescription, FilmInfo,
 } from './film-page.styled';
 import { IFilm } from 'interfaces/film.interface';
+import { observer } from 'mobx-react';
+import { useStore } from 'stores/root-store';
 
 type TParams =  { id: string };
 
 interface IProps {
-  userFilms: IFilm[];
-  films: IFilm[];
-  onUpdateFilms: (f: any) => void;
-  onUpdateUserFilms: (f: IFilm) => void;
   match: match<TParams>;
 }
 
 const FilmPage = ({
-  match: { params: { id } }, films, onUpdateFilms, userFilms, onUpdateUserFilms,
+  match: { params: { id } },
 }: IProps) => {
   const [filmDetails, setFilmDetails] = useState<IFilm>();
+  const { filmStore } = useStore();
 
   useEffect(() => {
     // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-    films.find((item) => item.id === +id)
-      ? setFilmDetails(() => films.find((item) => item.id === +id))
+    filmStore.films.find((item: IFilm) => item.id === +id)
+      ? setFilmDetails(() => filmStore.films.find((item: IFilm) => item.id === +id))
       : fetch(`https://api.themoviedb.org/3/movie/${id}?api_key=${process.env.REACT_APP_API_KEY}`)
         .then((res) => res.json())
         .then((res) => {
-          onUpdateFilms(() => {
-            const filmMarks = userFilms.find((film) => film.id === +id);
-            return [...films, {
-              ...res,
-              liked: filmMarks ? filmMarks.liked : false,
-              watched: filmMarks ? filmMarks.watched : false,
-              toWatch: filmMarks ? filmMarks.toWatch : false,
-            }];
-          });
+          const filmMarks = filmStore.userFilms.find((film: IFilm) => film.id === +id);
+          filmStore.addFilms([{
+            ...res,
+            liked: filmMarks ? filmMarks.liked : false,
+            watched: filmMarks ? filmMarks.watched : false,
+            toWatch: filmMarks ? filmMarks.toWatch : false,
+          }]);
         });
-  }, [films, filmDetails]);
+  }, [filmStore.films, filmDetails]);
 
   return filmDetails ? (
     <WrapperColumn alignSide="center">
       <FilmTitle>{filmDetails.title}</FilmTitle>
       <FilmInfo>
         <FilmPoster
-          onUpdateFilms={onUpdateFilms}
           filmDetails={filmDetails}
-          films={films}
-          onUpdateUserFilms={onUpdateUserFilms}
         />
         <FilmDescription>{filmDetails.overview}</FilmDescription>
       </FilmInfo>
@@ -62,4 +56,4 @@ const FilmPage = ({
   );
 };
 
-export default FilmPage;
+export default observer(FilmPage);

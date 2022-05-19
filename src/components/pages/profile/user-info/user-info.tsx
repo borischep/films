@@ -5,12 +5,16 @@ import FormSelect from 'components/common/form/form-select';
 import Form from 'components/common/form';
 import { IUser } from 'interfaces/user.interface';
 import 'react-tabs/style/react-tabs.css';
+import { observer } from 'mobx-react';
+import { useStore } from 'stores/root-store';
 
 interface IProps {
   editInfo?: boolean;
 }
 
-const UserInfo = ({ editInfo }: IProps) => {
+const UserInfo = ({ editInfo = false }: IProps) => {
+  const { userStore } = useStore();
+
   const genders = [
     'Male', 'Female', 'Prefer not to tell',
   ];
@@ -19,20 +23,19 @@ const UserInfo = ({ editInfo }: IProps) => {
     'Action', 'Adventure', 'Comedy', 'Drama', 'Historical', 'Horror', 'Science fiction', 'War films', 'Westerns',
   ];
 
-  const [editUserInfo, setEditUserInfo] = useState<boolean>(editInfo!);
-  const [userInfo, setUserInfo] = useState<IUser>();
+  const [editUserInfo, setEditUserInfo] = useState<boolean>(editInfo);
 
-  useEffect(() => setUserInfo(JSON.parse(localStorage.getItem('userInfo') || '')), []);
+  useEffect(() => userStore.setUser(JSON.parse(localStorage.getItem('userInfo') || '')), []);
 
   const onSubmit = (form: IUser) => {
-    setUserInfo(form);
+    userStore.setUser(form);
     localStorage.setItem('userInfo', JSON.stringify(form));
     setEditUserInfo((prev) => !prev);
   };
 
   return editUserInfo ? (
     <WrapperColumn alignSide="center">
-      <Form submit={onSubmit} formInitialValues={userInfo!}>
+      <Form submit={onSubmit} formInitialValues={userStore.user}>
         <FormInput name="username" label="Username" placeholder="Example: Your name" type="string" />
         <FormInput name="email" label="Email" type="email" placeholder="example@email.com" />
         <FormInput name="birthday" label="Birthday" type="date" placeholder="00.00.0000" />
@@ -49,12 +52,14 @@ const UserInfo = ({ editInfo }: IProps) => {
   )
     : (
       <WrapperColumn alignSide="left">
-        {userInfo?.username ? <Text>Username: {userInfo.username}</Text> : null}
-        {userInfo?.email ? <Text>Email: {userInfo.email}</Text> : null}
-        {userInfo?.birthday ? <Text>Birthday: {userInfo.birthday}</Text> : null}
-        {userInfo?.gender ? <Text>Gender: {userInfo.gender}</Text> : null}
-        {userInfo?.genre ? <Text>Favorite genre: {userInfo.genre}</Text> : null}
-        {userInfo?.filmsAmount ? <Text>How many films you want to watch in month: {userInfo.filmsAmount}</Text> : null}
+        {userStore.user?.username ? <Text>Username: {userStore.user.username}</Text> : null}
+        {userStore.user?.email ? <Text>Email: {userStore.user.email}</Text> : null}
+        {userStore.user?.birthday ? <Text>Birthday: {userStore.user.birthday}</Text> : null}
+        {userStore.user?.gender ? <Text>Gender: {userStore.user.gender}</Text> : null}
+        {userStore.user?.genre ? <Text>Favorite genre: {userStore.user.genre}</Text> : null}
+        {userStore.user?.filmsAmount
+          ? <Text>How many films you want to watch in month: {userStore.user.filmsAmount}</Text>
+          : null}
         <WrapperColumn alignSide="center">
           <ButtonWithBorderRadius onClick={() => {
             setEditUserInfo((prev) => !prev);
@@ -67,4 +72,4 @@ const UserInfo = ({ editInfo }: IProps) => {
     );
 };
 
-export default UserInfo;
+export default observer(UserInfo);

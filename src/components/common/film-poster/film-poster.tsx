@@ -4,36 +4,38 @@ import { ReactComponent as WatchIcon } from 'assets/watch.svg';
 import { ReactComponent as WatchedIcon } from 'assets/watched.svg';
 import { FilmPosterWrapper, FilmPosterImg } from './film-poster.styled';
 import { IFilm } from 'interfaces/film.interface';
+import { observer } from 'mobx-react';
+import { useStore } from 'stores/root-store';
+
 
 interface IProps {
   filmDetails: IFilm;
-  films: IFilm[];
-  onUpdateFilms: (f: IFilm[]) => void;
-  onUpdateUserFilms: (f: IFilm) => void;
 }
 
 const FilmPoster = ({
-  filmDetails, films, onUpdateFilms, onUpdateUserFilms,
+  filmDetails,
 }: IProps) => {
+  const { filmStore } = useStore();
+
   const onLiked = () => {
-    onUpdateFilms([...films.map((item) => (item.id !== filmDetails.id
+    filmStore.setFilms([...filmStore.films.map((item: IFilm) => (item.id !== filmDetails.id
       ? item
       : { ...item, liked: !item.liked }))]);
-    onUpdateUserFilms({ ...filmDetails, liked: !filmDetails.liked });
+    filmStore.updateUserFilm({ ...filmDetails, liked: !filmDetails.liked });
   };
 
   const onWatched = () => {
-    onUpdateFilms([...films.map((item) => (item.id !== filmDetails.id
+    filmStore.setFilms([...filmStore.films.map((item: IFilm) => (item.id !== filmDetails.id
       ? item
       : { ...item, watched: !item.watched }))]);
-    onUpdateUserFilms({ ...filmDetails, watched: !filmDetails.watched });
+    filmStore.updateUserFilm({ ...filmDetails, watched: !filmDetails.watched });
   };
 
   const onToWatch = () => {
-    onUpdateFilms([...films.map((item) => (item.id !== filmDetails.id
+    filmStore.setFilms([...filmStore.films.map((item: IFilm) => (item.id !== filmDetails.id
       ? item
       : { ...item, toWatch: !item.toWatch }))]);
-    onUpdateUserFilms({ ...filmDetails, toWatch: !filmDetails.toWatch });
+    filmStore.updateUserFilm({ ...filmDetails, toWatch: !filmDetails.toWatch });
   };
 
   return (
@@ -52,4 +54,4 @@ const FilmPoster = ({
   );
 };
 
-export default FilmPoster;
+export default observer(FilmPoster);

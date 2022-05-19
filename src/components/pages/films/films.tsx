@@ -4,23 +4,16 @@ import { WrapperColumn, WrapperRowWrap } from 'atoms/atoms.styled';
 import FilmsListItem from 'components/common/films-list-item';
 import ErrorMessage from 'components/common/error-message';
 import { IFilm } from 'interfaces/film.interface';
+import { observer } from 'mobx-react';
+import { useStore } from 'stores/root-store';
 
-interface IProps {
-  userFilms: IFilm[];
-  films: IFilm[];
-  nextPage: number;
-  onUpdateFilms: (f: IFilm[]) => void;
-  onUpdateUserFilms: (f: IFilm) => void;
-  setNextPage: (e: number) => void;
-}
-
-const Films: React.FC<IProps> = ({
-  films = [], userFilms, nextPage, onUpdateUserFilms, onUpdateFilms, setNextPage,
-}) => {
+const Films = () => {
   const [error, setError] = useState(false);
+  const { filmStore } = useStore();
 
   const fetchData = () => {
-    fetch(`https://api.themoviedb.org/3/movie/popular/?api_key=${process.env.REACT_APP_API_KEY}&page=${nextPage}`)
+    // eslint-disable-next-line max-len
+    fetch(`https://api.themoviedb.org/3/movie/popular/?api_key=${process.env.REACT_APP_API_KEY}&page=${filmStore.page + 1}`)
       .then((res) => {
         if (res.ok) {
           return res.json();
@@ -29,15 +22,8 @@ const Films: React.FC<IProps> = ({
         throw new Error('Something went wrong');
       })
       .then((res) => {
-        onUpdateFilms([...films.filter((item) => (!res.results.find((film: IFilm) => film.id === item.id))),
-          ...res.results.map((item: IFilm) => {
-            const filmMarks = userFilms.find((film) => film.id === item.id);
-            item.liked = filmMarks ? filmMarks.liked : false;
-            item.watched = filmMarks ? filmMarks.watched : false;
-            item.toWatch = filmMarks ? filmMarks.toWatch : false;
-            return item;
-          })]);
-        setNextPage(nextPage + 1);
+        filmStore.addFilms(res.results);
+        filmStore.setNextPage();
       })
       .catch(() => {
         setError(true);
@@ -48,19 +34,16 @@ const Films: React.FC<IProps> = ({
     ? <ErrorMessage />
     : (
       <InfiniteScroll
-        pageStart={nextPage}
+        pageStart={filmStore.page}
         loadMore={fetchData}
-        hasMore={nextPage < 10}
+        hasMore={filmStore.page < 10}
         loader={<h4 key="loader">Loading...</h4>}
       >
         <WrapperRowWrap>
-          {films.map((film) => (
+          {filmStore.films.map((film: IFilm) => (
             <FilmsListItem
-              key={film.id + nextPage}
-              onUpdateFilms={onUpdateFilms}
+              key={film.id + filmStore.page}
               filmDetails={film}
-              films={films}
-              onUpdateUserFilms={onUpdateUserFilms}
             />
           ))}
         </WrapperRowWrap>
@@ -74,4 +57,4 @@ const Films: React.FC<IProps> = ({
   );
 };
 
-export default Films;
+export default observer(Films);

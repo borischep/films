@@ -5,30 +5,28 @@ import {
   ButtonWithBorderRadius, WrapperRowWrap,
 } from 'atoms/atoms.styled';
 import { HeaderWrapper, SwitchWrapper, HeaderText } from './header.styled';
+import { observer } from 'mobx-react';
+import { useStore } from 'stores/root-store';
 
-interface IProps {
-  onDarkThemeOn: (b: boolean) => void;
-  isLogged: boolean;
-  setIsLogged: (b: boolean) => void;
-}
-
-const Header = ({ onDarkThemeOn, setIsLogged, isLogged }: IProps) => {
+const Header = () => {
   const [checked, setChecked] = useState<boolean>(false);
+  const { userStore, filmStore, themeStore } = useStore();
 
   const onClickLogout = () => {
     localStorage.removeItem('userInfo');
     localStorage.removeItem('isAuthenticated');
     localStorage.removeItem('userFilms');
-    setIsLogged(false);
+    userStore.clearStore();
+    filmStore.clearStore();
   };
 
   useEffect(() => {
-    setIsLogged(localStorage.getItem('isAuthenticated') === 'true');
+    userStore.setIsLogged(localStorage.getItem('isAuthenticated') === 'true');
   }, []);
 
   const onThemeChanged = (value: boolean) => {
     setChecked((prev) => !prev);
-    onDarkThemeOn(value);
+    themeStore.setDarkTheme(value);
   };
 
   return (
@@ -45,7 +43,7 @@ const Header = ({ onDarkThemeOn, setIsLogged, isLogged }: IProps) => {
           />
           <HeaderText>Dark theme</HeaderText>
         </SwitchWrapper>
-        {isLogged
+        {userStore.isLogged
           ? (
             <div>
               <Link to="/profile">
@@ -61,4 +59,4 @@ const Header = ({ onDarkThemeOn, setIsLogged, isLogged }: IProps) => {
   );
 };
 
-export default Header;
+export default observer(Header);

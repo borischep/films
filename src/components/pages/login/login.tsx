@@ -3,14 +3,13 @@ import { useHistory, Link } from 'react-router-dom';
 import {
   WrapperColumn, Text, Input, ButtonWithBorderRadius,
 } from 'atoms/atoms.styled';
+import { observer } from 'mobx-react';
+import { useStore } from 'stores/root-store';
 
-interface IProps {
-  setIsLogged: (e: boolean) => void;
-}
-
-const Login = ({ setIsLogged }: IProps) => {
+const Login = () => {
   const [username, setUsername] = useState('');
   const history = useHistory();
+  const { userStore } = useStore();
 
   const userInfoInitialState = {
     email: '',
@@ -30,7 +29,7 @@ const Login = ({ setIsLogged }: IProps) => {
       <Input 
         name="user"
         value={username}
-        onChange={(i: React.ChangeEvent<HTMLInputElement>) => setUsername(i.target.value)}
+        onChange={(({ target }: React.ChangeEvent<HTMLInputElement>) => setUsername(target.value))}
       />
       <Link to="/films">
         <ButtonWithBorderRadius
@@ -39,7 +38,8 @@ const Login = ({ setIsLogged }: IProps) => {
             if (username) {
               localStorage.setItem('userInfo', JSON.stringify({ username, ...userInfoInitialState }));
               localStorage.setItem('isAuthenticated', 'true');
-              setIsLogged(true);
+              userStore.setUser({ username });
+              userStore.setIsLogged(true);
             } else {
               alert('Input cannot be empty');
             }
@@ -52,4 +52,4 @@ const Login = ({ setIsLogged }: IProps) => {
   );
 };
 
-export default Login;
+export default observer(Login);
