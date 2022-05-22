@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { Dispatch, useEffect } from 'react';
 import {
   Tab, Tabs, TabList, TabPanel,
 } from 'react-tabs';
@@ -9,16 +9,31 @@ import FilmsListItem from 'components/common/films-list-item';
 import UserInfo from './user-info';
 import 'react-tabs/style/react-tabs.css';
 import { IFilm } from 'interfaces/film.interface';
+import { ADD_FILMS } from 'actions/actionTypes';
+import { connect } from 'react-redux';
+import { IRootStore } from 'store';
+import { IUserAction } from 'interfaces/userAction.interface';
 
 interface IProps {
   userFilms: IFilm[];
   films: IFilm[];
-  onUpdateFilms: (f: any) => void;
-  onUpdateUserFilms: (f: IFilm) => void;
+  addFilms: (f: IFilm[]) => void;
 }
 
+const mapStateToProps = (state: IRootStore) => {
+  return {
+    userFilms: state.userFilms,
+    films: state.films,
+  };
+};
+
+const mapDispatchToProps = (dispatch: Dispatch<IUserAction>) => ({
+  addFilms: (payload: IFilm[]) =>
+    dispatch({ type: ADD_FILMS, payload }),
+});
+
 const Profile: React.FC<IProps> = ({
-  films = [], onUpdateFilms, userFilms = [], onUpdateUserFilms,
+  films = [], addFilms, userFilms,
 }) => {
   useEffect(() => {
     userFilms.forEach((userFilm) => {
@@ -26,7 +41,7 @@ const Profile: React.FC<IProps> = ({
         fetch(`https://api.themoviedb.org/3/movie/${userFilm.id}?api_key=${process.env.REACT_APP_API_KEY}`)
           .then((res) => res.json())
           .then((res: IFilm) => {
-            onUpdateFilms((prev: IFilm[]) => [...prev, {
+            addFilms([{
               ...res,
               liked: userFilm.liked,
               watched: userFilm.watched,
@@ -38,7 +53,6 @@ const Profile: React.FC<IProps> = ({
   }, [userFilms]);
 
   return (
-    // eslint-disable-next-line react/jsx-filename-extension
     <WrapperColumn alignSide="center">
       <UserInfo />
       <Tabs>
@@ -54,10 +68,7 @@ const Profile: React.FC<IProps> = ({
               ? (
                 <FilmsListItem
                   key={film.id}
-                  onUpdateFilms={onUpdateFilms}
                   filmDetails={film}
-                  films={films}
-                  onUpdateUserFilms={onUpdateUserFilms}
                 />
               )
               : null))}
@@ -69,10 +80,7 @@ const Profile: React.FC<IProps> = ({
               ? (
                 <FilmsListItem
                   key={film.id}
-                  onUpdateFilms={onUpdateFilms}
                   filmDetails={film}
-                  films={films}
-                  onUpdateUserFilms={onUpdateUserFilms}
                 />
               )
               : null))}
@@ -84,10 +92,7 @@ const Profile: React.FC<IProps> = ({
               ? (
                 <FilmsListItem
                   key={film.id}
-                  onUpdateFilms={onUpdateFilms}
                   filmDetails={film}
-                  films={films}
-                  onUpdateUserFilms={onUpdateUserFilms}
                 />
               )
               : null))}
@@ -98,4 +103,4 @@ const Profile: React.FC<IProps> = ({
   );
 };
 
-export default Profile;
+export default connect(mapStateToProps, mapDispatchToProps)(Profile);
