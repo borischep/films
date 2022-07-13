@@ -3,7 +3,7 @@ import { SET_USER, UPDATE_USER,
   SET_NEXT_PAGE, SET_PAGE,
   SET_DARK_THEME,
   SET_USER_FILMS, UPDATE_USER_FILM, 
-  SET_FILMS, ADD_FILMS,
+  SET_FILMS, SET_FILM, ADD_FILMS, SET_ERROR,
   CLEAR_USER_STORE } from 'actions/actionTypes';
 import { IFilm } from 'interfaces/film.interface';
 import { IRootStore } from 'store';
@@ -60,19 +60,39 @@ export const reducer: Reducer = (state: IRootStore, action: AnyAction) => {
       return {
         ...state, films: action.payload,
       };
+    case SET_FILM:
+      return {
+        ...state,
+        films: [
+          ...state.films.map((item: IFilm) => action.payload.id !== item.id 
+            ? item
+            : action.payload,
+          ),
+        ],
+      };
     case ADD_FILMS:
       return {
         ...state,
         films: [
           ...state.films.filter((item: IFilm) => (!action.payload.find((film: IFilm) => film.id === item.id))),
-          ...action.payload,
+          ...action.payload.map((item: IFilm) => {
+            const filmMarks = state.userFilms.find((film: IFilm) => film.id === item.id);
+            item.liked = filmMarks ? filmMarks.liked : false;
+            item.watched = filmMarks ? filmMarks.watched : false;
+            item.toWatch = filmMarks ? filmMarks.toWatch : false;
+            return item;
+          }),
         ],
+      };
+    case SET_ERROR:
+      return {
+        ...state, error: action.payload,
       };
     case CLEAR_USER_STORE: 
       return {
         ...state,
         films: [],
-        page: 0,
+        page: 1,
         userFilms: [],
         user: {},
       };

@@ -5,16 +5,18 @@ import FormSelect from 'components/common/form/form-select';
 import Form from 'components/common/form';
 import { IUser } from 'interfaces/user.interface';
 import 'react-tabs/style/react-tabs.css';
-import { SET_USER } from 'actions/actionTypes';
+import { SET_ERROR, SET_USER } from 'actions/actionTypes';
 import { connect } from 'react-redux';
 import { IRootStore } from 'store';
 import { IUserAction } from 'interfaces/userAction.interface';
 import { getUser, setUser } from 'api/users';
+import { IError } from 'interfaces/error.interface';
 
 interface IProps {
   editInfo?: boolean;
   user: IUser;
   setUserInfo: (u: IUser) => void;
+  setError: (f: IError) => void;
 }
 
 const mapStateToProps = (state: IRootStore) => {
@@ -26,9 +28,11 @@ const mapStateToProps = (state: IRootStore) => {
 const mapDispatchToProps = (dispatch: Dispatch<IUserAction>) => ({
   setUserInfo: (payload: IUser) =>
     dispatch({ type: SET_USER, payload }),
+  setError: (payload: IError) =>
+    dispatch({ type: SET_ERROR, payload }),
 });
 
-const UserInfo = ({ editInfo = false, user, setUserInfo }: IProps) => {
+const UserInfo = ({ editInfo = false, user, setUserInfo, setError }: IProps) => {
   const genders = [
     'Male', 'Female', 'Prefer not to tell',
   ];
@@ -43,6 +47,9 @@ const UserInfo = ({ editInfo = false, user, setUserInfo }: IProps) => {
     getUser()
       .then((res) => {
         setUserInfo(res[0]);
+      })
+      .catch(() => {
+        setError({ isError: true, text: 'Error while user data fetching' });
       });
   }, []);
 

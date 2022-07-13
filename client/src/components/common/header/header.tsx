@@ -5,7 +5,7 @@ import {
   ButtonWithBorderRadius, WrapperRowWrap,
 } from 'atoms/atoms.styled';
 import { HeaderWrapper, SwitchWrapper, HeaderText } from './header.styled';
-import { SET_IS_LOGGED, SET_DARK_THEME } from 'actions/actionTypes';
+import { SET_IS_LOGGED, SET_DARK_THEME, CLEAR_USER_STORE } from 'actions/actionTypes';
 import { connect } from 'react-redux';
 import { IRootStore } from 'store';
 import { IUserAction } from 'interfaces/userAction.interface';
@@ -15,6 +15,7 @@ interface IProps {
   isLogged: boolean;
   setDarkTheme: (b: boolean) => void;
   setIsLogged: (b: boolean) => void;
+  clearUserStore: () => void;
 }
 
 const mapStateToProps = (state: IRootStore) => {
@@ -28,13 +29,16 @@ const mapDispatchToProps = (dispatch: Dispatch<IUserAction>) => ({
     dispatch({ type: SET_IS_LOGGED, payload }),
   setDarkTheme: (payload: boolean) =>
     dispatch({ type: SET_DARK_THEME, payload }),
+  clearUserStore: () =>
+    dispatch({ type: CLEAR_USER_STORE }),
 });
 
-const Header = ({ setDarkTheme, setIsLogged, isLogged }: IProps) => {
+const Header = ({ setDarkTheme, setIsLogged, clearUserStore, isLogged }: IProps) => {
   const [checked, setChecked] = useState<boolean>(false);
 
   const onClickLogout = () => {
     localStorage.removeItem('isAuthenticated');
+    clearUserStore();
     setIsLogged(false);
     deleteUser();
   };

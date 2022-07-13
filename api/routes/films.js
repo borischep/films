@@ -32,9 +32,8 @@ router.get('/pages/:page', async (req, res) => {
         );
       });
     })
-    .catch((err) => {
+    .catch(async(err) => {
       console.log(err);
-      return [];
     })
   
   return res.json(await Film.find({page: req.params.page}));

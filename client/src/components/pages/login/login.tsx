@@ -3,7 +3,7 @@ import { useHistory, Link } from 'react-router-dom';
 import {
   WrapperColumn, Text, Input, ButtonWithBorderRadius,
 } from 'atoms/atoms.styled';
-import { SET_IS_LOGGED } from 'actions/actionTypes';
+import { SET_IS_LOGGED, SET_USER } from 'actions/actionTypes';
 import { connect } from 'react-redux';
 import { IUserAction } from 'interfaces/userAction.interface';
 import { getUser, setUser } from 'api/users';
@@ -13,6 +13,7 @@ import { IUser } from 'interfaces/user.interface';
 interface IProps {
   isLogged: boolean;
   setIsLogged: (e: boolean) => void;
+  setUserData: (f: IUser) => void;
 }
 
 const mapStateToProps = (state: IRootStore) => {
@@ -22,11 +23,13 @@ const mapStateToProps = (state: IRootStore) => {
 };
 
 const mapDispatchToProps = (dispatch: Dispatch<IUserAction>) => ({
+  setUserData: (payload: IUser) => 
+    dispatch({ type: SET_USER, payload }),
   setIsLogged: (payload: boolean) =>
     dispatch({ type: SET_IS_LOGGED, payload }),
 });
 
-const Login = ({ setIsLogged, isLogged }: IProps) => {
+const Login = ({ setIsLogged, isLogged, setUserData }: IProps) => {
   const [username, setUsername] = useState('');
   const history = useHistory();
 
@@ -51,6 +54,7 @@ const Login = ({ setIsLogged, isLogged }: IProps) => {
           onClick={() => {
             if (username) {
               localStorage.setItem('isAuthenticated', 'true');
+              setUserData({ username });
               setUser({ username });
               setIsLogged(true);
             } else {
