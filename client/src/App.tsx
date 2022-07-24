@@ -3,10 +3,10 @@ import {
   BrowserRouter as Router,
   Switch,
   Route,
+  Redirect,
 } from 'react-router-dom';
 import { ThemeProvider } from 'styled-components';
 import { LightTheme, DarkTheme } from 'theme.styled';
-import Login from 'components/pages/login';
 import ProtectedRoute from 'components/routes/protected-route';
 import FilmPage from 'components/pages/film-page';
 import Films from 'components/pages/films';
@@ -21,6 +21,8 @@ import { IUserAction } from 'interfaces/userAction.interface';
 import { getUserFilms } from 'api/films';
 import { ErrorBoundary } from 'react-error-boundary';
 import { IError } from 'interfaces/error.interface';
+import NewEditUser from 'components/pages/newEditUser';
+import Login from 'components/pages/login';
 
 interface IProps {
   errors: IError;
@@ -29,6 +31,7 @@ interface IProps {
 const mapStateToProps = (state: IRootStore) => {
   return {
     darkTheme: state.darkTheme,
+    isLogged: state.isLogged,
     errors: state.error,
   };
 };
@@ -54,13 +57,15 @@ const ErrorComponent = ({ errors }: IProps) => {
   return null;
 };
 
-const App = ({ darkTheme, errors, setError, setUserFilms }: ComponentProps) => {
+const App = ({ darkTheme, isLogged, errors, setError, setUserFilms }: ComponentProps) => {
   useEffect(() => {
-    getUserFilms()
-      .then((res) => {
-        setUserFilms(res);
-      });
-  }, []);
+    if (isLogged) {
+      getUserFilms()
+        .then((res) => {
+          setUserFilms(res);
+        });
+    }
+  }, [isLogged]);
 
   return (
     <ErrorBoundary
@@ -81,11 +86,19 @@ const App = ({ darkTheme, errors, setError, setUserFilms }: ComponentProps) => {
           <Router>
             <Header />
             <Switch>
+              <Route exact path="/" render={() => (
+                <Redirect to="/films" />
+              )}/>
               <Route
-                path="/"
-                exact
+                path="/login"
                 render={() => (
                   <Login />
+                )}
+              />
+              <Route
+                path="/registration"
+                render={() => (
+                  <NewEditUser />
                 )}
               />
               <ProtectedRoute

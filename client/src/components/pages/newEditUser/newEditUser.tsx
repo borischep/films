@@ -4,6 +4,7 @@ import * as yup from 'yup';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { TextField } from '@mui/material';
+// import moment from 'moment';
 
 import {
   WrapperColumn,
@@ -11,18 +12,21 @@ import {
   WrapperWithMargin,
   Text,
 } from 'atoms/atoms.styled';
-import { ILoginData, IUser } from 'interfaces/user.interface';
+import { IUser } from 'interfaces/user.interface';
 import 'react-tabs/style/react-tabs.css';
 import { SET_ERROR, SET_IS_LOGGED, SET_USER } from 'actions/actionTypes';
-import { IRootStore } from 'store';
+import { IRootStore, userInitialState } from 'store';
 import { IUserAction } from 'interfaces/userAction.interface';
-import { login } from 'api/users';
+import { editUser, registerUser } from 'api/users';
 import { IError } from 'interfaces/error.interface';
 import { Link, useHistory } from 'react-router-dom';
+import CommonSelect from 'components/common/common-select';
 
 interface IProps {
+  user?: IUser;
   isLogged: boolean;
   setUserInfo: (u: IUser) => void;
+  setEditUserInfo?: (e: boolean) => void;
   setIsLogged: (e: boolean) => void;
   setGlobalError: (f: IError) => void;
 }
@@ -43,6 +47,10 @@ const requiredFieldMessage = 'This field is required';
 
 const schema = yup.object().shape({
   login: yup.string().required(requiredFieldMessage),
+  email: yup.string().email().required(requiredFieldMessage),
+  gender: yup.string().required(requiredFieldMessage),
+  genre: yup.string().required(requiredFieldMessage),
+  filmsAmount: yup.number().required(requiredFieldMessage),
   password: yup
     .string()
     .min(8, 'Minimum 8 characters')
@@ -53,13 +61,15 @@ const schema = yup.object().shape({
     )
     .matches(
       /(?=.*^[a-zA-Z\d\s!'#$%&'()*+,-./:;<=>?@[\\\]^_`{|}~]*$)/g,
-      'Uppercase and lowercase Latin letters, numbers from 0 to 9, symbols: (space)!"#$%&\\\'()*+,-./:;<=>?@[]^_`{|}~',
+      'Uppercase and lowercase Latin letters, numbers from 0 to 9, symbols: (space)!\"#$%&\\\'()*+,-./:;<=>?@[]^_`{|}~',
     )
     .required(requiredFieldMessage),
 });
 
 const NewEditUser = ({
+  user,
   isLogged,
+  setEditUserInfo,
   setIsLogged,
   setUserInfo,
   setGlobalError,
@@ -68,31 +78,67 @@ const NewEditUser = ({
 
   const {
     register,
+    reset,
     formState: { errors },
     handleSubmit,
     setError,
   } = useForm<IUser>({ resolver: yupResolver(schema) });
 
+  const genders = ['Male', 'Female', 'Prefer not to tell'];
+
+  const genres = [
+    'Action',
+    'Adventure',
+    'Comedy',
+    'Drama',
+    'Historical',
+    'Horror',
+    'Science fiction',
+    'War films',
+    'Westerns',
+  ];
+
   useEffect(() => {
-    if (isLogged) {
+    if (isLogged && !user) {
       history.push('/films');
     }
-  }, [isLogged]);
+  }, [isLogged, user]);
 
-  const onSubmit = async (data: ILoginData) => {
-    try {
-      const res = await login(data);
+  useEffect(() => {
+    if (user) {
+      reset(user);
+    } else {
+      reset(userInitialState);
+    }
+  }, [user]);
 
+  const onSubmit = async (data: IUser) => {
+    if (user) {
+      try {
+        const res = await editUser(data);
+        if (res.status === 'ERROR') {
+          setError('login', { message: res.error });
+        }
+        if (res.status === 'SUCCESS') {
+          setUserInfo(data);
+          if (setEditUserInfo) {
+            setEditUserInfo(false);
+          }
+        }
+      } catch (err: any) {
+        setGlobalError(err);
+      }
+    } else {
+
+      const res = await registerUser(data);
       if (res.status === 'ERROR') {
-        setError('password', { message: res.error });
+        setError('login', { message: res.error });
       }
       if (res.status === 'SUCCESS') {
-        setUserInfo(res.userData);
+        setUserInfo(data);
         setIsLogged(true);
         history.push('/films');
       }
-    } catch (err: any) {
-      setGlobalError(err.toString());
     }
   };
 
@@ -114,6 +160,45 @@ const NewEditUser = ({
         <WrapperWithMargin>
           <TextField
             className='input'
+            {...register('email')}
+            error={!!errors.email}
+            helperText={errors.email?.message?.toString()}
+            name='email'
+            label='Email'
+            type='email'
+            placeholder='example@email.com'
+          />
+        </WrapperWithMargin>
+        <CommonSelect
+          {...register('gender')}
+          helperText={errors.login?.message?.toString()}
+          error={!!errors.gender}
+          label='Gender'
+          options={genders}
+        />
+        <CommonSelect
+          {...register('genre')}
+          helperText={errors.login?.message?.toString()}
+          error={!!errors.genre}
+          label='Favorite genre'
+          options={genres}
+        />
+        <WrapperWithMargin>
+          <TextField
+            className='input'
+            {...register('filmsAmount')}
+            error={!!errors.filmsAmount}
+            helperText={errors.filmsAmount?.message?.toString()}
+            name='filmsAmount'
+            InputProps={{ inputProps: { min: 0 } }}
+            label='How many films do you want to watch in month'
+            type='number'
+            placeholder='16'
+          />
+        </WrapperWithMargin>
+        <WrapperWithMargin>
+          <TextField
+            className='input'
             {...register('password')}
             error={!!errors.password}
             helperText={errors.password?.message?.toString()}
@@ -123,10 +208,12 @@ const NewEditUser = ({
             type='string'
           />
         </WrapperWithMargin>
-        <Text>
-          <Link to='/registration'>Create account</Link>
-        </Text>
-        <ButtonWithBorderRadius type='submit'>Login</ButtonWithBorderRadius>
+        {!user ? (
+          <Text>
+            <Link to='/login'>Login to your account</Link>
+          </Text>
+        ) : null}
+        <ButtonWithBorderRadius type='submit'>Save</ButtonWithBorderRadius>
       </WrapperColumn>
     </form>
   );

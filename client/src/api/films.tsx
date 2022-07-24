@@ -1,8 +1,12 @@
+import Cookies from 'universal-cookie';
 import { IFilm } from 'interfaces/film.interface';
 import { FILMS_URL, FILM_URL, USER_FILMS_URL } from './links';
 
+const cookies = new Cookies();
+
 export const getFilms = async () => {
-  return fetch(FILMS_URL)
+  return fetch(FILMS_URL, 
+    { headers: { 'x-access-token': cookies.get('accessToken') } })
     .then((response) => {
       if (!response.ok) {
         throw new Error('HTTP status ' + response.status);
@@ -15,7 +19,8 @@ export const getFilms = async () => {
 };
 
 export const getFilmsByPage = async (page: number) => {
-  return fetch(`${FILMS_URL}/pages/${page}`)
+  return fetch(`${FILMS_URL}/pages/${page}`, 
+    { headers: { 'x-access-token': cookies.get('accessToken') } })
     .then((response) => {
       if (!response.ok) {
         throw new Error('HTTP status ' + response.status);
@@ -29,7 +34,8 @@ export const getFilmsByPage = async (page: number) => {
 };
 
 export const getFilmById = async (id: number) => {
-  return fetch(`${FILM_URL}/${id}`)
+  return fetch(`${FILM_URL}/${id}`, 
+    { headers: { 'x-access-token': cookies.get('accessToken') } })
     .then((response) => {
       if (!response.ok) {
         throw new Error('HTTP status ' + response.status);
@@ -43,7 +49,8 @@ export const getFilmById = async (id: number) => {
 };
 
 export const getUserFilms = async () => {
-  return fetch(USER_FILMS_URL)
+  return fetch(USER_FILMS_URL, 
+    { headers: { 'x-access-token': cookies.get('accessToken') } })
     .then((response) => {
       if (!response.ok) {
         throw new Error('HTTP status ' + response.status);
@@ -57,7 +64,8 @@ export const getUserFilms = async () => {
 };
 
 export const getLikedFilms = async () => {
-  return fetch(`${USER_FILMS_URL}/liked`)
+  return fetch(`${USER_FILMS_URL}/liked`, 
+    { headers: { 'x-access-token': cookies.get('accessToken') } })
     .then((response) => {
       if (!response.ok) {
         throw new Error('HTTP status ' + response.status);
@@ -71,7 +79,8 @@ export const getLikedFilms = async () => {
 };
 
 export const getWatchedFilms = async () => {
-  return fetch(`${USER_FILMS_URL}/watched`)
+  return fetch(`${USER_FILMS_URL}/watched`, 
+    { headers: { 'x-access-token': cookies.get('accessToken') } })
     .then((response) => {
       if (!response.ok) {
         throw new Error('HTTP status ' + response.status);
@@ -85,7 +94,8 @@ export const getWatchedFilms = async () => {
 };
 
 export const getToWatchFilms = async () => {
-  return fetch(`${USER_FILMS_URL}/toWatch`)
+  return fetch(`${USER_FILMS_URL}/toWatch`, 
+    { headers: { 'x-access-token': cookies.get('accessToken') } })
     .then((response) => {
       if (!response.ok) {
         throw new Error('HTTP status ' + response.status);
@@ -104,6 +114,7 @@ export const setUserFilm = async (film: IFilm) => {
     method: 'POST',
     body: JSON.stringify(film),
     headers: {
+      'x-access-token': cookies.get('accessToken'),
       'Access-Control-Allow-Headers': '*',
       'Accept': 'application/json',
       'Content-Type': 'application/json',

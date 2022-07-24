@@ -18,7 +18,7 @@ router.get('/pages/:page', async (req, res) => {
     })
     .then(async (result) => {
       await result.results.forEach(async film => {
-        const userFilm = await UserFilm.findOne({ id: film.id });
+        const userFilm = await UserFilm.findOne({ userLogin: req.tokenUser.login, id: film.id });
         await Film.findOneAndUpdate(
           { id: film.id },
           { $set: {
@@ -53,8 +53,8 @@ router.get('/movies/:id', async (req, res) => {
         return result.json();
       }
     })
-    .then((result) => {
-      const userFilm = UserFilm.find({ id: result.id });
+    .then(async (result) => {
+      const userFilm = await UserFilm.find({ userLogin: req.tokenUser.login, id: result.id });
       fetchedFilm = {
         ...result,
         liked: userFilm.liked,
@@ -87,16 +87,17 @@ router.get('/userfilms/toWatch', async (req, res) => {
 router.post('/userfilms', async (req, res) => {
   if (req.body.liked || req.body.watched || req.body.toWatch) {
     await UserFilm.findOneAndUpdate(
-      { id: req.body.id },
+      { userLogin: req.tokenUser.login, id: req.body.id },
       { $set: {
         liked: req.body.liked,
         watched: req.body.watched,
         toWatch: req.body.toWatch,
+        userLogin: req.tokenUser.login
       }},
       { upsert: true, new: true }
     );
   } else {
-    await UserFilm.findOneAndRemove({ id: req.body.id });
+    await UserFilm.findOneAndRemove({ userLogin: req.tokenUser.login, id: req.body.id });
   }
 
   await Film.findOneAndUpdate({ id: req.body.id }, {

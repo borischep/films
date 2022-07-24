@@ -1,13 +1,13 @@
 const mongoose = require('mongoose');
 
 const userSchema = new mongoose.Schema({
-    username: String,
-    password: {type: String, default: ''},
-    email: {type: String, default: ''},
-    birthday: {type: String, default: ''},
-    gender: {type: String, default: ''},
-    genre: {type: String, default: ''},
-    filmsAmount: {type: Number, default: 0},
+    login: {type: String, required: true},
+    password: {type: String, default: '', required: true},
+    email: {type: String, default: '', required: true},
+    gender: {type: String, default: '', required: true},
+    genre: {type: String, default: '', required: true},
+    filmsAmount: {type: Number, default: 0, required: true},
+    accessToken: String,
 })
 
 module.exports = mongoose.model('User', userSchema);

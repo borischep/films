@@ -1,33 +1,93 @@
 var express = require('express');
-const Film = require('../models/film');
+const jwt = require('jsonwebtoken');
+
 const User = require('../models/user');
-const UserFilm = require('../models/user-film');
+const withAuth = require('../middlewares/accessTokenAuth');
+
 var router = express.Router();
 
-router.get('/', async (req, res) => {
+router.get('/getAllUsers', withAuth, async (req, res) => {
   return res.json(await User.find());
 });
 
-router.delete('/', async (req, res) => {
-  await Film.deleteMany();
-  await UserFilm.deleteMany();
-  await User.deleteMany();
+router.get('/getUser', withAuth, async (req, res) => {
+  return res.json(await User.findOne({login: req.tokenUser.login}));
+});
+
+router.delete('/delete', withAuth, async (req, res) => {
+  await UserFilm.deleteMany({userLogin: req.tokenUser.login});
+  await User.deleteOne({login: req.tokenUser.login});
 })
 
-router.post('/', async (req, res) => {
-  const resp = await User.findOneAndUpdate(
-    { username: req.body.username},
-    { $set: {
-      username: req.body.username,
+router.post('/register', async (req, res) => {
+  const oldUser = await User.findOne({login: req.body.login})
+  if (oldUser) {
+    return res.status(409).send({status: 'ERROR', error: 'User Already Exist. Please Login'})
+  }
+
+  const user = await User.create(
+    {
+      login: req.body.login,
       email: req.body.email,
-      birthday: req.body.birthday,
       gender: req.body.gender,
       genre: req.body.genre,
       filmsAmount: req.body.filmsAmount,
-    }},
-    { upsert: true, new: true, setDefaultsOnInsert: true }
+      password: req.body.password,
+      userFilms: []
+    }
   );
-  return resp;
+  const accessToken = jwt.sign(
+    { user_id: user._id, login: req.body.login },
+    process.env.ACCESS_TOKEN_SECRET,
+    {
+      expiresIn: "3h",
+    }
+  );
+
+  user.accessToken = accessToken;
+
+  return res.json({status: 'SUCCESS', error: '', user: user })
+})
+
+router.post('/login', async (req, res) => {
+  try {
+    const user = await User.findOne({login: req.body.login, password: req.body.password})
+    if (!user) {
+      return res.send({status: 'ERROR', error: 'Login or password are incorrect'})
+    }
+
+    const accessToken = jwt.sign({ user_id: user._id, login: req.body.login },
+      process.env.ACCESS_TOKEN_SECRET, {
+      expiresIn: '3h'
+    })
+  
+    user.accessToken = accessToken
+    user.save()
+  
+    return res.send({status: 'SUCCESS', error: '', user: user})
+  } catch(err) {
+    return res.status(500).send(err);
+  }
+})
+
+router.post('/edit', withAuth, async (req, res) => {
+  try {
+    const user = await User.findOneAndUpdate(
+      { login: req.tokenUser.login },
+      {
+        username: req.body.username,
+        email: req.body.email,
+        gender: req.body.gender,
+        genre: req.body.genre,
+        filmsAmount: req.body.filmsAmount,
+        password: req.body.password,
+      },
+    );
+  
+    return res.send({status: 'SUCCESS', error: '', user: user});
+  } catch (err) {
+    return res.status(500).send({status: 'ERROR', error: 'Something is wrong'})
+  }
 })
 
 module.exports = router;

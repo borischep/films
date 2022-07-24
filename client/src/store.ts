@@ -14,10 +14,19 @@ export interface IRootStore {
   error: IError,
 }
 
+export const userInitialState = {
+  login: '',
+  password: '',
+  email: '',
+  gender: '',
+  genre: '',
+  filmsAmount: 0,
+};
+
 const preloadedState = {
   films: [],
   userFilms: [],
-  user: { username: '' },
+  user: userInitialState,
   isLogged: false,
   page: 1,
   darkTheme: false,
