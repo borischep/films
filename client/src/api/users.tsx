@@ -14,7 +14,7 @@ export const getAllUsers = async () => {
       return response.json();
     })
     .catch((err) => {
-      console.log(err);
+      console.error(err);
     });
 };
 
@@ -28,7 +28,7 @@ export const getUser = async () => {
       return response.json();
     })
     .catch((err) => {
-      console.log(err);
+      console.error(err);
     });
 };
 
@@ -55,7 +55,7 @@ export const registerUser = async (user: IUser) => {
       return res;
     })
     .catch((err) => {
-      console.log(err);
+      console.error(err);
     });
 };
 
@@ -79,7 +79,7 @@ export const editUser = async (user: IUser) => {
       return response.json();
     })
     .catch((err) => {
-      console.log(err);
+      console.error(err);
     });
 };
 
@@ -106,7 +106,7 @@ export const login = async (credentials: ILoginData) => {
       return res;
     })
     .catch((err) => {
-      console.log(err);
+      console.error(err);
     });
 };
 
@@ -123,6 +123,6 @@ export const deleteUser = async () => {
       return response.json();
     })
     .catch((err) => {
-      console.log(err);
+      console.error(err);
     });
 };

@@ -14,7 +14,7 @@ export const getFilms = async () => {
       return response.json();
     })
     .catch((err) => {
-      console.log(err);
+      console.error(err);
     });
 };
 
@@ -29,7 +29,7 @@ export const getFilmsByPage = async (page: number) => {
       return response.json();
     })
     .catch((err) => {
-      console.log(err);
+      console.error(err);
     });
 };
 
@@ -44,7 +44,7 @@ export const getFilmById = async (id: number) => {
       return response.json();
     })
     .catch((err) => {
-      console.log(err);
+      console.error(err);
     });
 };
 
@@ -59,7 +59,7 @@ export const getUserFilms = async () => {
       return response.json();
     })
     .catch((err) => {
-      console.log(err);
+      console.error(err);
     });
 };
 
@@ -74,7 +74,7 @@ export const getLikedFilms = async () => {
       return response.json();
     })
     .catch((err) => {
-      console.log(err);
+      console.error(err);
     });
 };
 
@@ -89,7 +89,7 @@ export const getWatchedFilms = async () => {
       return response.json();
     })
     .catch((err) => {
-      console.log(err);
+      console.error(err);
     });
 };
 
@@ -104,7 +104,7 @@ export const getToWatchFilms = async () => {
       return response.json();
     })
     .catch((err) => {
-      console.log(err);
+      console.error(err);
     });
 };
 
@@ -128,6 +128,6 @@ export const setUserFilm = async (film: IFilm) => {
       return response.json();
     })
     .catch((err) => {
-      console.log(err);
+      console.error(err);
     });
 };
