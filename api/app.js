@@ -33,7 +33,7 @@ app.set('view engine', 'ejs');
 try {
   app.use('/films', withAuth, filmsRouter);
 } catch(e) {
-  console.log(e);
+  console.error(e);
 }
 app.use('/users', usersRouter);
 

@@ -18,15 +18,11 @@ router.get('/pages/:page', async (req, res) => {
     })
     .then(async (result) => {
       await result.results.forEach(async film => {
-        const userFilm = await UserFilm.findOne({ userLogin: req.tokenUser.login, id: film.id });
         await Film.findOneAndUpdate(
           { id: film.id },
           { $set: {
             ...film,
             page: req.params.page,
-            liked: userFilm?.liked || false,
-            toWatch: userFilm?.toWatch || false,
-            watched: userFilm?.watched || false,
           }},
           { upsert: true, new: true }
         );
@@ -35,16 +31,39 @@ router.get('/pages/:page', async (req, res) => {
     .catch(async(err) => {
       console.error(err);
     })
+
+  const films = await Film.find({page: req.params.page})
+  const userFilms = await UserFilm.find({ userLogin: req.tokenUser.login });
+
+  const resFilms = await films.map((film) => {
+    const marks = userFilms.find((uFilm) => uFilm.id === film.id)
+
+    return {
+      ...film._doc,
+      liked: marks?.liked || false,
+      toWatch: marks?.toWatch || false,
+      watched: marks?.watched || false,
+    }
+  });
   
-  return res.json(await Film.find({page: req.params.page}));
+  return res.json(resFilms);
 })
 
 router.get('/movies/:id', async (req, res) => {
   let film = {};
-  let fetchedFilm = {};
+  let resFilm = {}
   film = await Film.findOne({id: req.params.id});
+  const userFilm = await UserFilm.findOne({ userLogin: req.tokenUser.login, id: req.params.id });
+
   if (film) {
-    return res.send(film);
+    resFilm = {
+      ...film._doc,
+      liked: userFilm?.liked || false,
+      toWatch: userFilm?.toWatch || false,
+      watched: userFilm?.watched || false,
+    }
+
+    return res.send(resFilm);
   }
 
   await fetch(`https://api.themoviedb.org/3/movie/${req.params.id}?api_key=${process.env.FILMS_API_KEY}`)
@@ -54,34 +73,86 @@ router.get('/movies/:id', async (req, res) => {
       }
     })
     .then(async (result) => {
-      const userFilm = await UserFilm.find({ userLogin: req.tokenUser.login, id: result.id });
-      fetchedFilm = {
-        ...result,
-        liked: userFilm.liked,
-        toWatch: userFilm.toWatch,
-        watched: userFilm.watched
-      };
+      film = await Film.create(result);
     })
 
-  await Film.create(fetchedFilm);
-  film = await Film.find({id: req.params.id});
+  resFilm = {
+    ...film._doc,
+    liked: userFilm?.liked || false,
+    toWatch: userFilm?.toWatch || false,
+    watched: userFilm?.watched || false,
+  }
+
   return res.json(film);
 });
 
 router.get('/userfilms', async (req, res) => {
-  return res.json(await Film.find({$or:[{liked: true},{watched: true}, {toWatch: true}]}));
+  const films = await Film.find()
+  const userFilms = await UserFilm.find({ userLogin: req.tokenUser.login });
+
+  const resFilms = await userFilms.map((userFilm) => {
+    const filmData = films.find((uFilm) => uFilm.id === userFilm.id)
+
+    return {
+      ...filmData._doc,
+      liked: userFilm?.liked || false,
+      toWatch: userFilm?.toWatch || false,
+      watched: userFilm?.watched || false,
+    }
+  });
+
+  return res.json(resFilms);
 })
 
 router.get('/userfilms/liked', async (req, res) => {
-  return res.json(await Film.find({liked: true}));
+  const films = await Film.find({page: req.params.page})
+  const userFilms = await UserFilm.find({ userLogin: req.tokenUser.login, liked: true });
+
+  const resFilms = await films.map((film) => {
+    const marks = userFilms.find((uFilm) => uFilm.id === film.id)
+
+    return {
+      ...film._doc,
+      liked: marks?.toWatch || false,
+      toWatch: marks?.toWatch || false,
+      watched: marks?.watched || false,
+    }
+  });
+  return res.json(resFilms);
 });
 
 router.get('/userfilms/watched', async (req, res) => {
-  return res.json(await Film.find({watched: true}));
+  const films = await Film.find({page: req.params.page})
+  const userFilms = await UserFilm.find({ userLogin: req.tokenUser.login, watched: true });
+
+  const resFilms = await films.map((film) => {
+    const marks = userFilms.find((uFilm) => uFilm.id === film.id)
+
+    return {
+      ...film._doc,
+      liked: marks?.toWatch || false,
+      toWatch: marks?.toWatch || false,
+      watched: marks?.watched || false,
+    }
+  });
+  return res.json(resFilms);
 })
 
 router.get('/userfilms/toWatch', async (req, res) => {
-  return res.json(await Film.find({toWatch: true}));
+  const films = await Film.find({page: req.params.page})
+  const userFilms = await UserFilm.find({ userLogin: req.tokenUser.login, toWatch: true });
+
+  const resFilms = await films.map((film) => {
+    const marks = userFilms.find((uFilm) => uFilm.id === film.id)
+
+    return {
+      ...film._doc,
+      liked: marks?.toWatch || false,
+      toWatch: marks?.toWatch || false,
+      watched: marks?.watched || false,
+    }
+  });
+  return res.json(resFilms);
 })
 
 router.post('/userfilms', async (req, res) => {
@@ -100,13 +171,17 @@ router.post('/userfilms', async (req, res) => {
     await UserFilm.findOneAndRemove({ userLogin: req.tokenUser.login, id: req.body.id });
   }
 
-  await Film.findOneAndUpdate({ id: req.body.id }, {
-    liked: req.body.liked,
-    watched: req.body.watched,
-    toWatch: req.body.toWatch,
-  });
+  const film = await Film.findOne({id: req.body.id});
+  const userFilm = await UserFilm.findOne({ userLogin: req.tokenUser.login, id: req.body.id });
 
-  return res.send(await Film.findOne({ id: req.body.id }));
+  const resFilm = {
+    ...film._doc,
+    liked: userFilm?.liked || false,
+    toWatch: userFilm?.toWatch || false,
+    watched: userFilm?.watched || false,
+  }
+
+  return res.send(resFilm);
 })
 
 module.exports = router;

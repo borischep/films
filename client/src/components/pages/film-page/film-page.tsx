@@ -46,7 +46,7 @@ const FilmPage = ({
           addFilms([res]);
           setFilmDetails(res);
         });
-  }, []);
+  }, [films]);
 
   return filmDetails ? (
     <WrapperColumn alignSide="center">
