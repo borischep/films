@@ -43,6 +43,7 @@ const Header = ({ setDarkTheme, setIsLogged, clearUserStore, isLogged }: IProps)
     cookies.remove('accessToken');
     clearUserStore();
     history.push('/login');
+    localStorage.setItem('thirdPartyLogin', 'false');
   };
 
   const onThemeChanged = (value: boolean) => {

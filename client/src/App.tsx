@@ -5,6 +5,7 @@ import {
   Route,
   Redirect,
 } from 'react-router-dom';
+import { GoogleOAuthProvider } from '@react-oauth/google';
 import { ThemeProvider } from 'styled-components';
 import { LightTheme, DarkTheme } from 'theme.styled';
 import ProtectedRoute from 'components/routes/protected-route';
@@ -83,44 +84,46 @@ const App = ({ darkTheme, isLogged, errors, setError, setUserFilms }: ComponentP
       <ErrorComponent errors={errors} />
       <div className={darkTheme ? 'dark' : ''}>
         <ThemeProvider theme={darkTheme ? DarkTheme : LightTheme}>
-          <Router>
-            <Header />
-            <Switch>
-              <Route exact path="/" render={() => (
-                <Redirect to="/films" />
-              )}/>
-              <Route
-                path="/login"
-                render={() => (
-                  <Login />
-                )}
-              />
-              <Route
-                path="/registration"
-                render={() => (
-                  <NewEditUser />
-                )}
-              />
-              <ProtectedRoute
-                path="/profile"
-                component={Profile}
-              />
-              <Route
-                path="/films/:id"
-                render={(props) => (
-                  <FilmPage
-                    {...props}
-                  />
-                )}
-              />
-              <Suspense fallback={<div>Loading...</div>}>
-                <ProtectedRoute
-                  path="/films"
-                  component={Films}
+          <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID || ''}>
+            <Router>
+              <Header />
+              <Switch>
+                <Route exact path="/" render={() => (
+                  <Redirect to="/films" />
+                )}/>
+                <Route
+                  path="/login"
+                  render={() => (
+                    <Login />
+                  )}
                 />
-              </Suspense>
-            </Switch>
-          </Router>
+                <Route
+                  path="/registration"
+                  render={() => (
+                    <NewEditUser />
+                  )}
+                />
+                <ProtectedRoute
+                  path="/profile"
+                  component={Profile}
+                />
+                <Route
+                  path="/films/:id"
+                  render={(props) => (
+                    <FilmPage
+                      {...props}
+                    />
+                  )}
+                />
+                <Suspense fallback={<div>Loading...</div>}>
+                  <ProtectedRoute
+                    path="/films"
+                    component={Films}
+                  />
+                </Suspense>
+              </Switch>
+            </Router>
+          </GoogleOAuthProvider>
         </ThemeProvider>
       </div>
     </ErrorBoundary>
