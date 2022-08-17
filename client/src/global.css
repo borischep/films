@@ -6,3 +6,15 @@ a {
 body {
     margin: 50px 0 0 0;
 }
+
+.input {
+    width: 400px;
+	height: 60px;
+	padding: 5px;
+}
+
+.select {
+    width: 400px;
+	height: 60px;
+	padding: 5px;
+}

@@ -1,8 +1,13 @@
 export interface IUser {
-  username: string;
-  email?: string;
-  birthday?: string;
-  gender?: string;
-  genre?: string;
-  filmsAmount?: number;
+  login: string;
+  password: string;
+  email: string;
+  gender: string;
+  genre: string;
+  filmsAmount: number;
+}
+
+export interface ILoginData {
+  login: string;
+  password: string;
 }

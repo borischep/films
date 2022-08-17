@@ -1,4 +1,4 @@
-import React, { Dispatch, useEffect } from 'react';
+import React, { Dispatch, useEffect, useState } from 'react';
 import {
   Tab, Tabs, TabList, TabPanel,
 } from 'react-tabs';
@@ -6,7 +6,7 @@ import {
   WrapperColumn, WrapperRowWrap,
 } from 'atoms/atoms.styled';
 import FilmsListItem from 'components/common/films-list-item';
-import UserInfo from './user-info';
+import NewEditUser from 'components/pages/newEditUser';
 import 'react-tabs/style/react-tabs.css';
 import { IFilm } from 'interfaces/film.interface';
 import { getFilmById } from 'api/films';
@@ -15,9 +15,12 @@ import { IUserAction } from 'interfaces/userAction.interface';
 import { connect } from 'react-redux';
 import { IRootStore } from 'store';
 import { IError } from 'interfaces/error.interface';
+import UserInfo from 'components/common/user-info';
+import { IUser } from 'interfaces/user.interface';
 
 interface IProps {
   userFilms: IFilm[];
+  user: IUser;
   films: IFilm[];
   addFilms: (f: IFilm[]) => void;
   setError: (f: IError) => void;
@@ -27,6 +30,7 @@ const mapStateToProps = (state: IRootStore) => {
   return {
     userFilms: state.userFilms,
     films: state.films,
+    user: state.user,
   };
 };
 
@@ -38,8 +42,9 @@ const mapDispatchToProps = (dispatch: Dispatch<IUserAction>) => ({
 });
 
 const Profile: React.FC<IProps> = ({
-  films = [], userFilms, addFilms, setError,
+  films = [], user, userFilms, addFilms, setError,
 }) => {
+  const [editUserInfo, setEditUserInfo] = useState(false);
   useEffect(() => {
     userFilms.forEach((userFilm) => {
       if (!films.find((film) => film.id === userFilm.id)) {
@@ -61,7 +66,17 @@ const Profile: React.FC<IProps> = ({
 
   return (
     <WrapperColumn alignSide="center">
-      <UserInfo />
+      {
+        editUserInfo
+          ? <NewEditUser
+              user={user}
+              setEditUserInfo={setEditUserInfo}
+            />
+          : <UserInfo
+              setEditUserInfo={setEditUserInfo}
+              user={user}
+          />
+      }
       <Tabs>
         <TabList>
           <Tab>Liked</Tab>

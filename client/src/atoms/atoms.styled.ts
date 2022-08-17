@@ -21,9 +21,22 @@ export const WrapperRowWrap = styled.div`
 	align-items: center;
 `;
 
+export const WrapperWithMargin = styled.div<Props>`
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	margin: ${(props) => props.margin ? props.margin : '0 0 30px 0'};
+`;
+
 export const Text = styled.div`
+	margin: 10px 0;
 	font-size: 24px;
 	color: ${(props) => props.theme.textColor};
+`;
+
+export const ErrorText = styled(Text)`
+	font-size: 14px;
+	color: red;
 `;
 
 export const Input = styled.input<Props>`

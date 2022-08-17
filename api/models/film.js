@@ -5,9 +5,6 @@ const filmSchema = new mongoose.Schema({
     overview: {type: String, default: ''},
     page: Number,
     id: Number,
-    liked: {type: Boolean, default: false},
-    watched: {type: Boolean, default: false},
-    toWatch: {type: Boolean, default: false},
     poster_path: {type: String, default: ''},
 })
 

@@ -1,6 +1,7 @@
-import React, { useState, useEffect, Dispatch } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, Dispatch } from 'react';
+import { Link, useHistory } from 'react-router-dom';
 import Switch from 'react-switch';
+import Cookies from 'universal-cookie';
 import {
   ButtonWithBorderRadius, WrapperRowWrap,
 } from 'atoms/atoms.styled';
@@ -9,7 +10,6 @@ import { SET_IS_LOGGED, SET_DARK_THEME, CLEAR_USER_STORE } from 'actions/actionT
 import { connect } from 'react-redux';
 import { IRootStore } from 'store';
 import { IUserAction } from 'interfaces/userAction.interface';
-import { deleteUser } from 'api/users';
 
 interface IProps {
   isLogged: boolean;
@@ -35,17 +35,15 @@ const mapDispatchToProps = (dispatch: Dispatch<IUserAction>) => ({
 
 const Header = ({ setDarkTheme, setIsLogged, clearUserStore, isLogged }: IProps) => {
   const [checked, setChecked] = useState<boolean>(false);
+  const cookies = new Cookies();
+  const history = useHistory();
 
   const onClickLogout = () => {
-    localStorage.removeItem('isAuthenticated');
-    clearUserStore();
     setIsLogged(false);
-    deleteUser();
+    cookies.remove('accessToken');
+    clearUserStore();
+    history.push('/login');
   };
-
-  useEffect(() => {
-    setIsLogged(localStorage.getItem('isAuthenticated') === 'true');
-  }, []);
 
   const onThemeChanged = (value: boolean) => {
     setChecked((prev) => !prev);

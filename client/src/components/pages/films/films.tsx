@@ -16,6 +16,7 @@ interface IProps {
   films: IFilm[];
   page: number;
   errors: IError;
+  isLogged: boolean;
   addFilms: (f: IFilm[]) => void;
   setError: (f: IError) => void;
   setNextPage: () => void;
@@ -26,6 +27,7 @@ const mapStateToProps = (state: IRootStore) => {
     page: state.page,
     films: state.films,
     errors: state.error,
+    isLogged: state.isLogged,
   };
 };
 
@@ -39,7 +41,7 @@ const mapDispatchToProps = (dispatch: Dispatch<IUserAction>) => ({
 });
 
 const Films = ({
-  films, page, errors, setError, addFilms, setNextPage,
+  films, page, errors, isLogged, setError, addFilms, setNextPage,
 }: IProps) => {
   const fetchData = async () => {
     await getFilmsByPage(page)
@@ -86,7 +88,11 @@ const Films = ({
     }}
   >
     <WrapperColumn alignSide="center">
-      {filmsList}
+      { 
+        isLogged
+          ? filmsList
+          : null  
+      }
     </WrapperColumn>
     </ErrorBoundary>
   );
