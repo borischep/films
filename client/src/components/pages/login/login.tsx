@@ -102,7 +102,6 @@ const NewEditUser = ({
   const responseGoogle = async (response: CredentialResponse) => {
     await loginGoogle(response)
       .then((res) => {
-        console.log(res);
         if (res.status === 'ERROR') {
           googleLogout();
           setIsError(true);

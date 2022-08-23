@@ -207,7 +207,7 @@ const NewEditUser = ({
                 name='password'
                 label='Password'
                 placeholder='Password'
-                type='string'
+                type='password'
               /> : null
           }
         </WrapperWithMargin>
