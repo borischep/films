@@ -197,23 +197,26 @@ const NewEditUser = ({
           />
         </WrapperWithMargin>
         <WrapperWithMargin>
-          <TextField
-            className='input'
-            {...register('password')}
-            error={!!errors.password}
-            helperText={errors.password?.message?.toString()}
-            name='password'
-            label='Password'
-            placeholder='Password'
-            type='string'
-          />
+          {
+            !localStorage.getItem('thirdPartyLogin') || localStorage.getItem('thirdPartyLogin') === 'false' ?
+              <TextField
+                className='input'
+                {...register('password')}
+                error={!!errors.password}
+                helperText={errors.password?.message?.toString()}
+                name='password'
+                label='Password'
+                placeholder='Password'
+                type='password'
+              /> : null
+          }
         </WrapperWithMargin>
         {!user ? (
           <Text>
             <Link to='/login'>Login to your account</Link>
           </Text>
         ) : null}
-        <ButtonWithBorderRadius type='submit'>Save</ButtonWithBorderRadius>
+        <ButtonWithBorderRadius type='submit'>{!user ? 'Register' : 'Save'}</ButtonWithBorderRadius>
       </WrapperColumn>
     </form>
   );

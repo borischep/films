@@ -1,6 +1,7 @@
 import Cookies from 'universal-cookie';
 import { IUser, ILoginData } from 'interfaces/user.interface';
 import { USERS_URL } from './links';
+import { CredentialResponse } from '@react-oauth/google';
 
 const cookies = new Cookies();
 
@@ -101,6 +102,35 @@ export const login = async (credentials: ILoginData) => {
       const res = response.json();
       res.then((data) => {
         cookies.set('accessToken', data.user.accessToken);
+        localStorage.setItem('thirdPartyLogin', 'false');
+      });
+
+      return res;
+    })
+    .catch((err) => {
+      console.error(err);
+    });
+};
+
+export const loginGoogle = async (credentials: CredentialResponse) => {
+  return fetch(`${USERS_URL}/login/google`, {
+    credentials: 'include',
+    mode: 'cors',
+    method: 'POST',
+    body: JSON.stringify(credentials),
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+    },
+  })
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error('HTTP status ' + response.status);
+      }
+      const res = response.json();
+      res.then((data) => {
+        cookies.set('accessToken', data.user.accessToken);
+        localStorage.setItem('thirdPartyLogin', 'true');
       });
 
       return res;
