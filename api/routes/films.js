@@ -10,27 +10,29 @@ router.get('/', async (req, res) => {
 })
 
 router.get('/pages/:page', async (req, res) => {
-  await fetch(`https://api.themoviedb.org/3/movie/popular/?api_key=${process.env.FILMS_API_KEY}&page=${req.params.page}`)
-    .then((result) => {
-      if (result.ok) {
-        return result.json();
-      }
-    })
-    .then(async (result) => {
-      await result.results.forEach(async film => {
-        await Film.findOneAndUpdate(
-          { id: film.id },
-          { $set: {
-            ...film,
-            page: req.params.page,
-          }},
-          { upsert: true, new: true }
-        );
-      });
-    })
-    .catch(async(err) => {
-      console.error(err);
-    })
+  if (process.env.FILMS_API_KEY) {
+    await fetch(`https://api.themoviedb.org/3/movie/popular/?api_key=${process.env.FILMS_API_KEY}&page=${req.params.page}`)
+      .then((result) => {
+        if (result.ok) {
+          return result.json();
+        }
+      })
+      .then(async (result) => {
+        await result.results.forEach(async film => {
+          await Film.findOneAndUpdate(
+            { id: film.id },
+            { $set: {
+              ...film,
+              page: req.params.page,
+            }},
+            { upsert: true, new: true }
+          );
+        });
+      })
+      .catch(async(err) => {
+        console.error(err);
+      })
+  }
 
   const films = await Film.find({page: req.params.page})
   const userFilms = await UserFilm.find({ userLogin: req.tokenUser.login });
@@ -105,7 +107,7 @@ router.get('/userfilms', async (req, res) => {
 })
 
 router.get('/userfilms/liked', async (req, res) => {
-  const films = await Film.find({page: req.params.page})
+  const films = await Film.find()
   const userFilms = await UserFilm.find({ userLogin: req.tokenUser.login, liked: true });
 
   const resFilms = await films.map((film) => {
@@ -122,7 +124,7 @@ router.get('/userfilms/liked', async (req, res) => {
 });
 
 router.get('/userfilms/watched', async (req, res) => {
-  const films = await Film.find({page: req.params.page})
+  const films = await Film.find()
   const userFilms = await UserFilm.find({ userLogin: req.tokenUser.login, watched: true });
 
   const resFilms = await films.map((film) => {
@@ -139,7 +141,7 @@ router.get('/userfilms/watched', async (req, res) => {
 })
 
 router.get('/userfilms/toWatch', async (req, res) => {
-  const films = await Film.find({page: req.params.page})
+  const films = await Film.find()
   const userFilms = await UserFilm.find({ userLogin: req.tokenUser.login, toWatch: true });
 
   const resFilms = await films.map((film) => {

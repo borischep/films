@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken');
 const GoogleAuth = require('google-auth-library');
 
 const User = require('../models/user');
+const UserFilm = require('../models/user-film');
 const withAuth = require('../middlewares/accessTokenAuth');
 
 var router = express.Router();
@@ -21,7 +22,8 @@ router.get('/getUser', withAuth, async (req, res) => {
 
 router.delete('/delete', withAuth, async (req, res) => {
   await UserFilm.deleteMany({userLogin: req.tokenUser.login});
-  await User.deleteOne({login: req.tokenUser.login});
+  const result = await User.deleteOne({login: req.tokenUser.login});
+  return res.json(result);
 })
 
 router.post('/register', async (req, res) => {
