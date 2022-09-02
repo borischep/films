@@ -16,7 +16,16 @@ const databaseName = process.env.DATABASE_NAME;
 
 const app = express();
 
-mongoose.connect(`${connectionURL}&dbName=${databaseName}`);
+mongoose.connect(`${connectionURL}&dbName=${databaseName}`,
+  (err) => {
+    if (err) {
+      console.error("failed to connect to mongoDB");
+      console.error(err);
+    } else {
+      console.log("mongodb is running and secured");
+    }
+  }
+);
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
